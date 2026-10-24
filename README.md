@@ -6,14 +6,14 @@
 | --- | --- |
 | Auction creation, server deadlines, commitment receipt, reveal, tie-break, invoice, manual transfer attestations | Implemented and locally tested |
 | Marketplace search, phase/extension/category filters, sorting, table/cards, pagination, local watchlist | Implemented and browser tested |
-| PostgreSQL schema and migrations | Implemented; applied to local PostgreSQL 16. Neon connection pending owner credential setup |
+| PostgreSQL schema and migrations | Implemented; applied to local PostgreSQL 16 and the configured Neon `neondb/public` target. Vercel's Production database environment is not verified |
 | Login/session and email-specific rate limiting | Implemented and locally tested |
 | Email verification | Resend integration implemented; **delivery unverified**. Production signup disabled until configured |
 | Zallet receiver assignment and wallet note monitoring | Implemented; tested against real local Z3 regtest RPC |
 | Real regtest payment recognized | **Yes:** shielded receiver note, Zebra chain check, three confirmations. Transparent coinbase source and overpayment; see status report |
 | Real public testnet payment recognized | **No:** owner wallet, sync, and funding still required |
 | DNS TXT control check | Implemented; external DNS evidence test pending |
-| Neon, Vercel, registrar automation, escrow, NFTs/art/real estate | Neon/Vercel not connected or deployed; other features planned only |
+| Vercel, registrar automation, escrow, NFTs/art/real estate | Vercel Production database configuration remains unverified; other features are planned only |
 
 Commitments hide amounts during bidding, but the application server sees valid reveals. The operator/database can access application records and remains trusted for availability and winner selection. An access-controlled invoice is not an encrypted Zcash transaction. Shielded receiving protects the recipient from public chain observers; it does not erase network metadata or guarantee transfer of the domain. Do not use mainnet or high-value assets.
 
@@ -23,6 +23,7 @@ Requires Node 22+, PostgreSQL 16+, npm. Copy [.env.example](.env.example) to `.e
 
 ```bash
 npm ci
+npm run db:check # confirms the target and reports missing schema; exits nonzero until migrated
 npm run db:migrate
 # Only in local short-auction mode, with SAMPLE_SEED_ENABLED=true:
 npm run seed:samples
@@ -35,7 +36,7 @@ Production signup requires a real verified Resend sender and `EMAIL_VERIFICATION
 
 ## Neon and Vercel
 
-The owner created a Neon resource named `shadowbid` in Washington, D.C. East. Place its **pooled** URL in `DATABASE_URL` privately and run `npm run db:migrate`. In Vercel, set `DATABASE_URL`, `WORKER_SECRET`, `ZCASH_NETWORK=testnet`, `EMAIL_VERIFICATION_MODE=resend`, `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL`. Keep wallet RPC credentials and wallet keys off Vercel. The wallet worker runs separately on WSL or an always-on host. See [deployment](docs/DEPLOYMENT.md) and [Zcash setup](docs/ZCASH_SETUP.md). No deployment or push has been performed.
+The owner created a Neon resource named `shadowbid` in Washington, D.C. East. The configured local pooled URL now has migrations 0000–0005; use `npm run db:check` to confirm it. In Vercel, set `DATABASE_URL`, `WORKER_SECRET`, `ZCASH_NETWORK=testnet`, `EMAIL_VERIFICATION_MODE=resend`, `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL`, then redeploy so the function receives the current environment. Keep wallet RPC credentials and wallet keys off Vercel. The wallet worker runs separately on WSL or an always-on host. See [deployment](docs/DEPLOYMENT.md) and [Zcash setup](docs/ZCASH_SETUP.md).
 
 ## Explore and verify
 
