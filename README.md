@@ -5,7 +5,7 @@
 | Critical feature | Actual status |
 | --- | --- |
 | Auction creation, server deadlines, commitment receipt, reveal, tie-break, invoice, manual transfer attestations | Implemented and locally tested |
-| Marketplace search, phase/extension/category filters, sorting, table/cards, pagination, local watchlist | Implemented and browser tested |
+| Real auction marketplace and separate read-only Demo Domain Catalog | Search, filters, sorting, card/list views; no demo records or payments in PostgreSQL |
 | PostgreSQL schema and migrations | Implemented; applied to local PostgreSQL 16 and the configured Neon `neondb/public` target. Vercel's Production database environment is not verified |
 | Login/session and email-specific rate limiting | Implemented and locally tested |
 | Email verification | Resend integration implemented; **delivery unverified**. Production signup disabled until configured |
@@ -25,12 +25,10 @@ Requires Node 22+, PostgreSQL 16+, npm. Copy [.env.example](.env.example) to `.e
 npm ci
 npm run db:check # confirms the target and reports missing schema; exits nonzero until migrated
 npm run db:migrate
-# Only in local short-auction mode, with SAMPLE_SEED_ENABLED=true:
-npm run seed:samples
 npm run dev
 ```
 
-Open `http://localhost:3000` (or the port Next.js reports). The safe seed creates or refreshes twelve illustrative `.com`, `.ai`, `.xyz`, and `.org` listings with two-minute bidding and reveal windows. They are marked **DEMO**, are browse-only, and cannot accept commitments or create invoices; no ownership, availability, or real sale is asserted. Re-running while active creates no duplicates; expired sample records with bids are preserved. Reserved `.example` protocol-test records remain searchable but do not crowd the default catalog. Set `SAMPLE_SEED_ENABLED=true` and `ALLOW_SHORT_AUCTIONS=true` only in nonproduction. Both seed scripts require a loopback PostgreSQL URL, refuse production mode, and never edit real auctions. For local walkthrough users, set private `TEST_*` credentials and `TEST_USER_SEED_ENABLED=true`, then run `npm run seed:test-users`.
+Open `http://localhost:3000` (or the port Next.js reports). The twelve illustrative `.com`, `.ai`, `.xyz`, and `.org` names are bundled as a read-only **Demo Domain Catalog**; no seed, database auction, bid, deadline, or invoice is created for them. The legacy `npm run seed:samples` command is a no-op. Existing sample rows are preserved in PostgreSQL but excluded from the public real-auction query. Reserved `.example` protocol-test records remain searchable when a local test creates them. To test a live two-minute auction, create a seller listing with `ALLOW_SHORT_AUCTIONS=true` in a disposable local database. The test-user seed requires a loopback PostgreSQL URL and explicit `TEST_USER_SEED_ENABLED=true`.
 
 Production signup requires a real verified Resend sender and `EMAIL_VERIFICATION_MODE=resend`; without that configuration the API returns 503 instead of pretending to send email. Local development may sign up unverified accounts without labeling their email verified. Password recovery is not implemented.
 
@@ -40,6 +38,6 @@ The owner created a Neon resource named `shadowbid` in Washington, D.C. East. Th
 
 ## Explore and verify
 
-Start the 60-second tour, browse the sample catalog, create separate seller/bidder accounts, save a bid receipt, reveal during the next phase, and inspect the authorized winner checkout. `npm run test:e2e` exercises a fast two-bidder path against a disposable local PostgreSQL database. `npx tsx scripts/regtest-e2e.ts` can repeat the genuine local Z3 regtest receiving test after its explicit local-only setup. Fixture payment tests and the regtest test are **not** evidence of a public testnet transaction.
+Start the 60-second tour, browse the read-only Demo Domain Catalog, switch to Real auctions, create separate seller/bidder accounts, save a bid receipt, reveal during the next phase, and inspect the authorized winner checkout. `npm run test:e2e` exercises a fast two-bidder path against a disposable local PostgreSQL database. `npx tsx scripts/regtest-e2e.ts` can repeat the genuine local Z3 regtest receiving test after its explicit local-only setup. Fixture payment tests and the regtest test are **not** evidence of a public testnet transaction.
 
 Read [auction protocol](docs/AUCTION_PROTOCOL.md), [privacy](docs/PRIVACY.md), [security](docs/SECURITY.md), [testing](docs/TESTING.md), and [integration status](docs/INTEGRATION_STATUS.md). The repository uses original ShadowBid code and the owner's supplied brand images; hackathon submission and final video remain owner actions.
