@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';import {bids} from '@/lib/schema';import {eq} from 'drizzle-orm';
+export async function GET(_:Request,{params}:{params:Promise<{id:string}>}){const {id}=await params;const rows=await db.select({receiptId:bids.receiptId,commitment:bids.commitment,createdAt:bids.createdAt}).from(bids).where(eq(bids.auctionId,id));return NextResponse.json(rows);}

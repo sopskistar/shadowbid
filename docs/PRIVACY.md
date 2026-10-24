@@ -1,0 +1,9 @@
+# Privacy disclosure
+
+During bidding, ShadowBid stores a SHA-256 commitment, receipt ID, account ID, and trusted server timestamp. The bid amount and secret stay in the browser until reveal. Commitment **counts and hashes are public**, so participation and timing are visible. A bidder's downloaded receipt contains the exact amount and secret; anyone who obtains it can learn the bid.
+
+During reveal, the application server learns valid bid values and secrets. Other bidders and public API clients cannot read them. The operator and database administrator can. The seller sees settlement state but not the full losing-bid table. Email addresses, IP logs at hosting providers, network metadata, and browser fingerprints can affect anonymity.
+
+A shielded Zcash payment protects recipient and amount from ordinary public-chain observers. The recipient wallet, wallet operator, application operator, and authorized winner know the invoice details. ZIP-321 wallet support varies. Zcash does not enforce the bid contract or prove domain transfer. DNS TXT verification proves only limited control of DNS at the time checked.
+
+The app stores no Zcash seed or spending key. The separate Zallet wallet may hold spending authority if configured with a mnemonic. The MVP has no noncustodial seller payout integration; the wallet operator controls received funds. Do not interpret “private” as “trustless” or “anonymous.”

@@ -1,0 +1,9 @@
+import {bech32,bech32m} from '@scure/base';
+export const ZATS=100000000n;
+export function parseZec(input:string):bigint {if(!/^(0|[1-9]\d*)(\.\d{1,8})?$/.test(input)) throw Error('Enter a ZEC amount with up to eight decimal places.'); const [whole,part='']=input.split('.');const n=BigInt(whole)*ZATS+BigInt(part.padEnd(8,'0'));if(n<=0n||n>21000000n*ZATS)throw Error('Amount is outside the supported range.');return n;}
+export function formatZec(zats:bigint):string {const v=(zats/ZATS).toString()+'.'+(zats%ZATS).toString().padStart(8,'0');return v.replace(/0+$/,'').replace(/\.$/,'');}
+export function canonicalBid(auctionId:string,bidderId:string,amountZats:string,secret:string){return JSON.stringify({version:1,auctionId,bidderId,amountZats,secret});}
+export async function sha256(s:string){const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(hash)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+export function bytesHex(bytes:Uint8Array){return Array.from(bytes).map(x=>x.toString(16).padStart(2,'0')).join('');}
+export function zip321(address:string,zats:bigint){return `zcash:${address}?amount=${formatZec(zats)}`;}
+export function validateShieldedAddress(address:string,network:'testnet'|'regtest'|'mainnet'='testnet'){try{if(address!==address.toLowerCase()||address.length<75)return false;const unified=network==='testnet'?['utest','zutest']:network==='regtest'?['uregtest','zuregtest']:['u','zu'];const sapling=network==='testnet'?'ztestsapling':network==='regtest'?'zregtestsapling':'zs';if(unified.some(prefix=>address.startsWith(prefix+'1'))){const decoded=bech32m.decode(address,2048);return unified.includes(decoded.prefix)&&decoded.words.length>30;}if(address.startsWith(sapling+'1')){const decoded=bech32.decode(address,2048);return decoded.prefix===sapling&&decoded.words.length>30;}return false;}catch{return false;}}

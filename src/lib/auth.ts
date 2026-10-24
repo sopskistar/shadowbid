@@ -1,0 +1,6 @@
+import {cookies} from 'next/headers';import {createHash,randomBytes} from 'node:crypto';import {eq,and,gt} from 'drizzle-orm';import {db} from './db';import {sessions,users} from './schema';
+export const hashToken=(s:string)=>createHash('sha256').update(s).digest('hex');
+export async function currentUser(){const token=(await cookies()).get('sb_session')?.value;if(!token)return null;const rows=await db.select({id:users.id,email:users.email}).from(sessions).innerJoin(users,eq(sessions.userId,users.id)).where(and(eq(sessions.tokenHash,hashToken(token)),gt(sessions.expiresAt,new Date()))).limit(1);return rows[0]||null;}
+export async function createSession(userId:string){const token=randomBytes(32).toString('hex');await db.insert(sessions).values({userId,tokenHash:hashToken(token),expiresAt:new Date(Date.now()+14*86400000)});(await cookies()).set('sb_session',token,{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'lax',path:'/',maxAge:14*86400});}
+export async function endSession(){const jar=await cookies();const token=jar.get('sb_session')?.value;if(token)await db.delete(sessions).where(eq(sessions.tokenHash,hashToken(token)));jar.delete('sb_session');}
+export function sameOrigin(req:Request){const origin=req.headers.get('origin');if(!origin)return false;return new URL(origin).host===req.headers.get('host');}

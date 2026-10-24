@@ -1,0 +1,3 @@
+import type {Metadata} from 'next';import './globals.css';import {Nav} from '@/components/Nav';import {Footer} from '@/components/Footer';import {ScrollReset} from '@/components/ScrollReset';
+export const metadata:Metadata={metadataBase:new URL(process.env.VERCEL_URL?`https://${process.env.VERCEL_URL}`:'http://localhost:3000'),title:{default:'ShadowBid — Private domain auctions',template:'%s | ShadowBid'},description:'Confidential sealed domain bids with shielded Zcash settlement.',icons:{icon:'/shadowbid-icon.png'},openGraph:{images:['/shadowbid-logo.png']}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><Nav/><ScrollReset/>{children}<Footer/></body></html>}

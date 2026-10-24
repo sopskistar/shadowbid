@@ -1,0 +1,1 @@
+ALTER TABLE "auctions" ADD COLUMN "finalized_at" timestamp with time zone;

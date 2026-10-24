@@ -1,0 +1,1 @@
+import {ReceiptVerifier} from '@/components/ReceiptVerifier';export default function Page(){return <main className="container section"><span className="eyebrow">VERIFY YOUR RECEIPT</span><h1>Check your sealed bid</h1><p className="muted">Compare your local receipt with the public commitment ledger without revealing the secret to this screen.</p><ReceiptVerifier/></main>}

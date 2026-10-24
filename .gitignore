@@ -147,3 +147,10 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local browser traces and reports
+/test-results/
+/playwright-report/
+
+# Editor swap files, which may contain private environment values
+*.swp

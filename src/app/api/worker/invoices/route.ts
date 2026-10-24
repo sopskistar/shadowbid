@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';import {invoices} from '@/lib/schema';import {verifyWorker} from '@/lib/worker-auth';
+import {eq} from 'drizzle-orm';
+export async function GET(req:Request){if(!await verifyWorker(req,''))return NextResponse.json({error:'Unauthorized'},{status:401});const rows=await db.select().from(invoices).where(eq(invoices.network,process.env.ZCASH_NETWORK==='regtest'?'regtest':'testnet'));return NextResponse.json(rows.map(i=>({id:i.id,address:i.address,walletAccount:i.walletAccount,status:i.status,deadline:i.deadline,amountZats:String(i.amountZats)})));}

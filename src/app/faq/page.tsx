@@ -1,0 +1,1 @@
+import {FAQ} from '@/components/FAQ';export default function Page(){return <main className="container section"><span className="eyebrow">QUESTIONS AND ANSWERS</span><h1>FAQ</h1><div style={{maxWidth:850}}><FAQ/></div></main>}

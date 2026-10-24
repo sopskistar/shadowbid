@@ -1,0 +1,1 @@
+'use client';import {motion} from 'motion/react';export function HeroHeadline(){return <motion.h1 initial={{opacity:0,y:22}} animate={{opacity:1,y:0}} transition={{duration:.7,ease:'easeOut'}}>The highest bid wins. <span className="goldtext">Nobody watches you bid.</span></motion.h1>}
