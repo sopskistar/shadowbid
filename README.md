@@ -13,7 +13,7 @@
 | Email verification | Resend integration implemented; **delivery unverified**. Production signup disabled until configured |
 | Zallet receiver assignment and wallet note monitoring | Implemented; tested against real local Z3 regtest RPC |
 | Real regtest payment recognized | **Yes:** shielded receiver note, Zebra chain check, three confirmations. Transparent coinbase source and overpayment; see status report |
-| Real public testnet payment recognized | **No:** owner wallet, sync, and funding still required |
+| Real public testnet payment recognized | **No:** Zebra reached the tip, but pinned Zallet beta.1 fails on post-NU7 transactions; a compatible receiving wallet and TAZ are still required |
 | DNS TXT control check | Implemented; external DNS evidence test pending |
 | Vercel, registrar automation, escrow, NFTs/art/real estate | Public Vercel routes pass a smoke check; its exact Production database target and authenticated flows remain unverified. Other features are planned only |
 
