@@ -7,7 +7,9 @@ export async function publicAuctions(){
     id:auctions.id,domain:auctions.domain,description:auctions.description,category:auctions.category,
     startingZats:auctions.startingZats,biddingEndsAt:auctions.biddingEndsAt,revealEndsAt:auctions.revealEndsAt,
     createdAt:auctions.createdAt,sample:auctions.sample,dnsVerifiedAt:auctions.dnsVerifiedAt,
+    finalizedAt:auctions.finalizedAt,cancelledAt:auctions.cancelledAt,
     commitments:sql<number>`count(distinct ${bids.id})::int`,
+    clearingZats:sql<string|null>`max(case when ${auctions.finalizedAt} is not null then ${invoices.amountZats} end)::text`,
     completedAt:sql<Date|null>`max(case when ${invoices.status} = 'confirmed' then ${invoices.buyerReceivedAt} end)`
   }).from(auctions).leftJoin(bids,eq(bids.auctionId,auctions.id)).leftJoin(invoices,eq(invoices.auctionId,auctions.id)).where(and(eq(auctions.sample,false),sql`${auctions.domain} !~* '\\.(example|test|invalid|localhost)$'`)).groupBy(auctions.id).orderBy(desc(auctions.createdAt)).limit(500);
   return rows;

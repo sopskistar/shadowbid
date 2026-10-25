@@ -1,3 +1,4 @@
+import {safeE2eDatabaseUrl} from './safe-db';
 import {loadEnvConfig} from '@next/env';
 import postgres from 'postgres';
 import {test,expect} from '@playwright/test';
@@ -5,8 +6,8 @@ import {readFile} from 'node:fs/promises';
 
 test('judge practice uses two genuine receipts, rejects tampering, and selects winner without invoice',async({page,browser})=>{
   test.setTimeout(240000);
-  loadEnvConfig(process.cwd());
-  const client=postgres(process.env.DATABASE_URL!,{max:1,prepare:false});
+  loadEnvConfig(process.cwd());safeE2eDatabaseUrl();
+  const client=postgres(safeE2eDatabaseUrl(),{max:1,prepare:false});
   try{
     await page.setViewportSize({width:390,height:844});
     await page.setExtraHTTPHeaders({'x-vercel-forwarded-for':`192.0.2.${Math.floor(Math.random()*240)+10}`});

@@ -12,4 +12,8 @@ After bidding closes and before reveal ends, the signed-in bidder uploads the re
 
 The public ledger exposes only receipt UUID, commitment hash, and accepted timestamp. It is operator-controlled and does not provide decentralized proof of fair selection. The operator remains trusted to run the application honestly and keep it available.
 
+After valid finalization, the public auction API and detail page disclose the final winning amount without bidder identity, losing amounts, invoice token, or shielded receiver. This price is a selected bid, not proof of payment or domain transfer. If no eligible revealed bid exists, finalization records an unsold outcome and creates no invoice. A small bidder set can still make the public winning price identifying by inference.
+
+A seller must attest authority to create an Owner Auction. A production testnet invoice may be created after finalization, but its payment receiver and QR remain unavailable until the seller's DNS TXT challenge is verified. The isolated loopback regtest flow has an explicit test-only exception. DNS control is a point-in-time signal, not legal title or registrar escrow.
+
 Auction-critical terms have no edit endpoint in this MVP. Expired unpaid invoices do not automatically promote a runner-up.

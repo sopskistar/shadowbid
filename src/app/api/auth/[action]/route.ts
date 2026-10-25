@@ -27,8 +27,14 @@ export async function POST(req:Request,{params}:{params:Promise<{action:string}>
       catch{return NextResponse.json({error:'Could not send verification email. Try again later.'},{status:503});}
     }
     if(existing)return NextResponse.json({ok:true,created:false,message:'If this address is already registered, sign in with it.'});
-    try{const [user]=await db.insert(users).values({email:body.email,passwordHash:await hash(body.password,12)}).returning();if(emailVerificationConfigured()){await sendVerificationEmail(user.id,user.email);return NextResponse.json({ok:true,created:true,pendingVerification:true,message:'Check your inbox for a verification link.'});}await createSession(user.id);return NextResponse.json({ok:true,created:true});}
-    catch{return NextResponse.json({ok:true,created:false,message:'If this address is already registered, sign in with it.'});}
+    const created=await db.insert(users).values({email:body.email,passwordHash:await hash(body.password,12)}).returning().catch(()=>null);
+    if(!created?.[0])return NextResponse.json({ok:true,created:false,message:'If this address is already registered, sign in with it.'});
+    const user=created[0];
+    if(emailVerificationConfigured()){
+      try{await sendVerificationEmail(user.id,user.email);return NextResponse.json({ok:true,created:true,pendingVerification:true,message:'Check your inbox for a verification link.'});}
+      catch{return NextResponse.json({error:'Could not send verification email. Try again later.'},{status:503});}
+    }
+    await createSession(user.id);return NextResponse.json({ok:true,created:true});
   }
   const valid=await compare(body.password,existing?.passwordHash||dummyHash);
   if(valid&&existing){if(process.env.EMAIL_VERIFICATION_MODE==='resend'&&!existing.emailVerifiedAt)return NextResponse.json({error:'Verify your email before signing in.'},{status:403});await createSession(existing.id);return NextResponse.json({ok:true});}

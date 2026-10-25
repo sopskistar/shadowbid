@@ -8,7 +8,7 @@ const app=process.env.SHADOWBID_APP_URL||'http://localhost:3000';
 const secret=process.env.WORKER_SECRET||'';
 const configuredNetwork=process.env.ZCASH_NETWORK;
 const network:'testnet'|'regtest'=configuredNetwork==='regtest'?'regtest':'testnet';
-const rpcUrl=process.env.ZALLET_RPC_URL||(network==='regtest'?'http://127.0.0.1:50232':'http://127.0.0.1:28232');
+const rpcUrl=process.env.ZALLET_RPC_URL||(network==='regtest'?'http://127.0.0.1:50232':'http://127.0.0.1:40232');
 const zebraUrl=process.env.ZEBRA_RPC_URL||'';
 if(secret.length<32)throw Error('WORKER_SECRET must contain at least 32 characters');
 if(configuredNetwork!=='testnet'&&configuredNetwork!=='regtest')throw Error('Worker supports testnet and local regtest only');
@@ -71,8 +71,8 @@ async function tick(){
         }
         await api('/api/worker/observe',{id:invoice.id,walletAccount:account,notes:verified});
       }
-    }catch(e){console.error(`Invoice ${invoice.id}:`,e instanceof Error?e.message:'Wallet processing failed');}
+    }catch{console.error(`Invoice ${invoice.id}: wallet processing failed; check local wallet health without logging RPC responses`);}
   }
 }
-async function main(){for(;;){try{await tick();await api('/api/worker/health',{state:'connected',details:zebraUrl?'Zebra chain cross-check enabled':'Wallet tip synchronized'});console.log('Wallet scan completed',new Date().toISOString());}catch(e){console.error('Wallet monitor unavailable:',e instanceof Error?e.message:'Unknown error');try{await api('/api/worker/health',{state:'error'})}catch{}}await new Promise(r=>setTimeout(r,15000));}}
+async function main(){for(;;){try{await tick();await api('/api/worker/health',{state:'connected',details:zebraUrl?'Zebra chain cross-check enabled':'Wallet tip synchronized'});console.log('Wallet scan completed',new Date().toISOString());}catch{console.error('Wallet monitor unavailable; inspect the local Z3 service without copying credentials or RPC responses into logs');try{await api('/api/worker/health',{state:'error'})}catch{}}await new Promise(r=>setTimeout(r,15000));}}
 if(import.meta.url===`file://${process.argv[1]}`)main();

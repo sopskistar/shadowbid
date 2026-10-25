@@ -14,7 +14,7 @@ async function post(path:string,cookie:string,body:unknown){const response=await
 async function waitFor<T>(fn:()=>Promise<T|undefined>,seconds=120){const end=Date.now()+seconds*1000;while(Date.now()<end){const found=await fn();if(found)return found;await new Promise(r=>setTimeout(r,3000));}throw Error('Timed out waiting for wallet/app state');}
 async function main(){
   const seller=await account(),buyer=await account();
-  const created=await post('/api/auctions',seller.cookie,{domain:'wallet-regtest.example',description:'Isolated local wallet integration test',category:'Technology / AI',startingPrice:'0.01',biddingMinutes:2,revealMinutes:2,paymentHours:1});
+  const created=await post('/api/auctions',seller.cookie,{domain:'wallet-regtest.example',description:'Isolated local wallet integration test',category:'Technology / AI',startingPrice:'0.01',biddingMinutes:2,revealMinutes:2,paymentHours:1,sellerAuthorized:true});
   const id=created.id as string,secret=randomBytes(32).toString('hex'),amountZats='2000000';
   const commitment=createHash('sha256').update(canonicalBid(id,buyer.id,amountZats,secret)).digest('hex');
   await post(`/api/auctions/${id}/commit`,buyer.cookie,{commitment});

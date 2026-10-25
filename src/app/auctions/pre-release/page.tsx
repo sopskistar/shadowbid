@@ -1,0 +1,5 @@
+import Link from 'next/link';
+import {InventoryNav} from '@/components/InventoryNav';
+
+export const metadata={title:'Pre-Release | ShadowBid',description:'Future authorized registrar inventory on ShadowBid.'};
+export default function Page(){return <main className="container marketplace-page"><header className="marketplace-heading"><div><span className="eyebrow">FUTURE INVENTORY</span><h1>Pre-Release<span>.</span></h1><p>A future path for authorized registrar-supplied names.</p></div></header><InventoryNav active="pre"/><section className="panel card inventory-preview"><span className="eyebrow">COMING NEXT</span><h2>Authorized inventory first.</h2><p>Pre-release auctions would require a verified registrar or inventory partner and clear transfer terms. ShadowBid has no such integration or partnership today. No names here are offered for bid, reserved, or available for payment.</p><div className="inventory-preview-actions"><Link className="btn gold" href="/auctions?view=owner">Browse Owner Auctions</Link><Link className="btn secondary" href="/roadmap">See the roadmap</Link></div></section></main>}

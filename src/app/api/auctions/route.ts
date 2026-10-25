@@ -17,11 +17,12 @@ const listingInput=z.object({
   biddingClosesAt:z.string().datetime({offset:true}).optional(),
   revealMinutes:z.number().int().positive(),
   paymentHours:z.number().int().min(1).max(168),
+  sellerAuthorized:z.literal(true),
 });
 
 export async function GET(){
   const rows=await publicAuctions();
-  return NextResponse.json(rows.map(a=>({...a,startingZats:String(a.startingZats)})));
+  return NextResponse.json(rows.map(a=>({...a,startingZats:String(a.startingZats)})),{headers:{'cache-control':'no-store'}});
 }
 
 export async function POST(req:Request){

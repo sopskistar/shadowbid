@@ -1,9 +1,10 @@
+import {safeE2eDatabaseUrl} from './safe-db';
 import {loadEnvConfig} from '@next/env';
 import postgres from 'postgres';
 import {test,expect} from '@playwright/test';
 
 test('seller previews and stages CSV without publishing unverified domains',async({page,browser})=>{
-  loadEnvConfig(process.cwd());const sql=postgres(process.env.DATABASE_URL!,{max:1,prepare:false});
+  loadEnvConfig(process.cwd());safeE2eDatabaseUrl();const sql=postgres(safeE2eDatabaseUrl(),{max:1,prepare:false});
   try{
     const name=`owner-${Date.now()}.com`,email=`import-${Date.now()}@example.test`;
     const end=new Date(Date.now()+4*3600000).toISOString().slice(0,19)+'Z';
