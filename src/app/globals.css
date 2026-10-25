@@ -33,3 +33,4 @@
 .seller-authorize{display:flex!important;align-items:center;gap:11px;line-height:1.5;color:#eee8f5}.seller-authorize input{width:18px!important;height:18px;flex:none;accent-color:#a76de1;margin:0}
 
 .authenticated-nav .hamburger{display:block}.authenticated-nav .mobile-menu{display:grid;gap:14px;padding:12px 20px 24px;border-top:1px solid #333}@media(max-width:900px){.authenticated-nav .desktop-account-link{display:none}}
+.deadline-times{display:flex;flex-direction:column;gap:4px}.deadline-times small{font-size:12px;font-weight:400;color:var(--muted)}
