@@ -14,12 +14,20 @@ export async function POST(req:Request,{params}:{params:Promise<{action:string}>
   if(!sameOrigin(req))return NextResponse.json({error:'Invalid origin'},{status:403});
   const {action}=await params;
   if(action==='logout'){await endSession();return NextResponse.json({ok:true});}
-  if(action!=='login'&&action!=='signup')return NextResponse.json({error:'Not found'},{status:404});
+  if(action!=='login'&&action!=='signup'&&action!=='resend-verification')return NextResponse.json({error:'Not found'},{status:404});
   let body:z.infer<typeof form>;
   try{body=form.parse(await req.json());}catch{return NextResponse.json({error:'Enter a valid email and password of at least 12 characters.'},{status:400});}
-  const limit=await takeAuthAttempt(action,body.email);
+  const limit=await takeAuthAttempt(action==='resend-verification'?'signup':action,body.email);
   if(!limit.allowed)return NextResponse.json({error:'Too many attempts. Try again in 15 minutes.'},{status:429,headers:{'Retry-After':String(limit.retryAfter)}});
   const [existing]=await db.select().from(users).where(eq(users.email,body.email)).limit(1);
+  if(action==='resend-verification'){
+    if(!emailVerificationConfigured())return NextResponse.json({error:'Verification email is temporarily unavailable.'},{status:503});
+    const valid=await compare(body.password,existing?.passwordHash||dummyHash);
+    if(valid&&existing&&!existing.emailVerifiedAt){
+      try{await sendVerificationEmail(existing.id,existing.email);}catch{return NextResponse.json({error:'Could not send verification email. Try again later.'},{status:503});}
+    }
+    return NextResponse.json({ok:true,message:'If this account still needs verification, a new link has been sent. Check your inbox and Spam or Junk folder.'});
+  }
   if(action==='signup'){
     if((process.env.NODE_ENV==='production'||process.env.EMAIL_VERIFICATION_MODE==='resend')&&!emailVerificationConfigured()&&!allowLocalUnverifiedSignup())return NextResponse.json({error:'Registration is temporarily unavailable until email verification is configured.'},{status:503});
     if(existing&&emailVerificationConfigured()&&!existing.emailVerifiedAt&&await compare(body.password,existing.passwordHash)){

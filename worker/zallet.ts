@@ -14,7 +14,7 @@ if(secret.length<32)throw Error('WORKER_SECRET must contain at least 32 characte
 if(configuredNetwork!=='testnet'&&configuredNetwork!=='regtest')throw Error('Worker supports testnet and local regtest only');
 if(!['127.0.0.1','localhost','::1'].includes(new URL(rpcUrl).hostname))throw Error('Zallet RPC must use loopback');
 if(!process.env.ZALLET_RPC_USER||!process.env.ZALLET_RPC_PASSWORD)throw Error('Zallet RPC credentials are required');
-if(network==='regtest'&&!zebraUrl)throw Error('ZEBRA_RPC_URL is required for regtest chain cross-checking');
+if(!zebraUrl)throw Error('ZEBRA_RPC_URL is required for chain cross-checking');
 if(zebraUrl&&!['127.0.0.1','localhost','::1'].includes(new URL(zebraUrl).hostname))throw Error('Zebra RPC must use loopback');
 
 async function call(method:string,params:unknown[]=[]):Promise<any>{
@@ -37,12 +37,9 @@ async function api(path:string,body?:unknown){
 }
 async function tick(){
   const wallet=await call('getwalletstatus');
-  const fullySynced=walletSynced(wallet);
-  if(!fullySynced){
-    if(!zebraUrl||!wallet?.node_tip?.height||wallet.wallet_tip)throw Error('Wallet scan is behind node tip or status format is unknown');
-    const chain=await zebra('getblockchaininfo');
-    if(chain.chain!=='test'||Math.abs(Number(chain.blocks)-Number(wallet.node_tip.height))>2)throw Error('Zebra and Zallet node tips disagree');
-  }
+  if(!walletSynced(wallet))throw Error('Wallet scan is behind node tip or status format is unknown');
+  const chain=await zebra('getblockchaininfo');
+  if(chain.chain!==(network==='testnet'?'test':'regtest')||Math.abs(Number(chain.blocks)-Number(wallet.node_tip.height))>2)throw Error('Zebra and Zallet node tips disagree');
   await api('/api/worker/finalize');
   const invoices=await api('/api/worker/invoices');
   for(const invoice of invoices){

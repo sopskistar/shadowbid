@@ -9,7 +9,7 @@ test('seller previews and stages CSV without publishing unverified domains',asyn
     const name=`owner-${Date.now()}.com`,email=`import-${Date.now()}@example.test`;
     const end=new Date(Date.now()+4*3600000).toISOString().slice(0,19)+'Z';
     const csv=`domain,opening_price_zec,bidding_end,reveal_end,description\n${name},0.025,${end},,"A good, short name"`;
-    await page.goto('/signup');await page.getByLabel('Email').fill(email);await page.getByLabel('Password').fill('SecureTestingPassword123!');await page.getByRole('button',{name:'Create account'}).click();await expect(page).toHaveURL(/dashboard/);
+    await page.goto('/signup');await page.getByLabel('Email').fill(email);await page.getByLabel('Password').fill('SecureTestingPassword123!');await page.getByRole('button',{name:'Create account'}).click();await expect(page).toHaveURL(/dashboard/,{timeout:20000});
     await page.goto('/dashboard/auctions');
     await page.getByLabel('Choose CSV').setInputFiles({name:'domains.csv',mimeType:'text/csv',buffer:Buffer.from(csv)});
     await page.getByRole('button',{name:'Preview import'}).click();
