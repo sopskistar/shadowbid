@@ -1,3 +1,11 @@
-'use client';import Link from 'next/link';import Image from 'next/image';import {useState} from 'react';import {Menu,X} from 'lucide-react';
+'use client';
+import Link from 'next/link';
+import Image from 'next/image';
+import {useState} from 'react';
+import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
+import {Menu,X} from 'lucide-react';
 const links=[['Explore Auctions','/auctions'],['How It Works','/#how'],['Why Privacy','/#privacy'],['FAQ','/faq'],['Roadmap','/roadmap'],['Documentation','/docs']];
-export function Nav(){const [open,setOpen]=useState(false);return <header className="nav"><div className="container nav-inner"><Link className="brand" href="/"><Image src="/shadowbid-icon.png" alt="" width={40} height={40}/>ShadowBid</Link><nav className="navlinks" aria-label="Primary">{links.map(([label,href])=><Link key={label} href={href}>{label}</Link>)}</nav><div className="nav-actions"><Link href="/login">Sign In</Link><Link className="btn small" href="/auctions">Launch Marketplace</Link><button className="hamburger" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button></div></div>{open&&<nav className="mobile-menu" aria-label="Mobile">{links.map(([label,href])=><Link onClick={()=>setOpen(false)} key={label} href={href}>{label}</Link>)}<Link onClick={()=>setOpen(false)} href="/login">Sign In</Link></nav>}</header>}
+export function Nav(){
+  const [open,setOpen]=useState(false),reduced=useReducedMotion();
+  return <header className="nav"><div className="container nav-inner"><Link className="brand" href="/"><Image src="/shadowbid-icon.png" alt="" width={40} height={40}/>ShadowBid</Link><nav className="navlinks" aria-label="Primary">{links.map(([label,href])=><Link key={label} href={href}>{label}</Link>)}</nav><div className="nav-actions"><Link href="/login">Sign In</Link><Link className="btn small" href="/auctions">Launch Marketplace</Link><button className="hamburger" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button></div></div><AnimatePresence>{open&&<motion.nav className="mobile-menu" aria-label="Mobile" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:reduced?0:.25}}>{links.map(([label,href])=><Link onClick={()=>setOpen(false)} key={label} href={href}>{label}</Link>)}<Link onClick={()=>setOpen(false)} href="/login">Sign In</Link></motion.nav>}</AnimatePresence></header>;
+}

@@ -1,0 +1,3 @@
+import {PracticeAuction} from '@/components/PracticeAuction';
+export const dynamic='force-dynamic';
+export default function Page(){return <main className="container section try-page"><span className="eyebrow">JUDGE LAB · ISOLATED PRACTICE</span><h1>Try a Private Auction</h1><p className="muted" style={{maxWidth:780,lineHeight:1.7}}>Run two genuine sealed commitments and reveals against server deadlines. You control both educational roles on this device, so this does not test privacy against the same person. The reserved .example domain is not an asset for sale. No invoice or payment request is created.</p><PracticeAuction/></main>}

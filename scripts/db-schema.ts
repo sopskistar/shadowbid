@@ -21,6 +21,9 @@ const required:Record<string,string[]>={
   worker_health:['name','state'],
   auth_limits:['key','attempts'],
   email_verification_tokens:['id','user_id'],
+  judge_sessions:['id','token_hash','expires_at','bidding_ends_at','reveal_ends_at'],
+  judge_bids:['id','session_id','role','commitment','amount_zats'],
+  imported_domains:['id','seller_id','domain','status','dns_challenge','auction_id'],
 };
 const client=postgres(connectionString,{max:1,prepare:false,connect_timeout:30});
 async function inspect(){

@@ -5,8 +5,10 @@
 | Critical feature | Actual status |
 | --- | --- |
 | Auction creation, server deadlines, commitment receipt, reveal, tie-break, invoice, manual transfer attestations | Implemented and locally tested |
-| Real auction marketplace and separate read-only Demo Domain Catalog | Search, filters, sorting, card/list views; no demo records or payments in PostgreSQL |
-| PostgreSQL schema and migrations | Implemented; applied to local PostgreSQL 16 and the configured Neon `neondb/public` target. Vercel's Production database environment is not verified |
+| Real auction marketplace and separate read-only Demo Market | Search, advanced filters, sorting, watchlist, list/card views; no demo records or payments in PostgreSQL |
+| Judge practice auction | Isolated PostgreSQL session, two genuine browser commitments and downloaded receipts, server deadlines, valid reveals, deterministic winner; **no invoice or payment request**. Browser tested |
+| Seller CSV import | Preview and attestation, 1–20 privately staged names, DNS TXT activation, cancellation; browser tested for staging and failed DNS. External positive DNS check remains unverified |
+| PostgreSQL schema and migrations | Migrations 0000–0007 applied to isolated PostgreSQL 16 and the configured Neon `neondb/public` target. Vercel's Production database assignment has not been independently inspected |
 | Login/session and email-specific rate limiting | Implemented and locally tested |
 | Email verification | Resend integration implemented; **delivery unverified**. Production signup disabled until configured |
 | Zallet receiver assignment and wallet note monitoring | Implemented; tested against real local Z3 regtest RPC |
@@ -28,16 +30,16 @@ npm run db:migrate
 npm run dev
 ```
 
-Open `http://localhost:3000` (or the port Next.js reports). The twelve illustrative `.com`, `.ai`, `.xyz`, and `.org` names are bundled as a read-only **Demo Domain Catalog**; no seed, database auction, bid, deadline, or invoice is created for them. The legacy `npm run seed:samples` command is a no-op. Existing sample rows are preserved in PostgreSQL but excluded from the public real-auction query. Reserved `.example` protocol-test records remain searchable when a local test creates them. To test a live two-minute auction, create a seller listing with `ALLOW_SHORT_AUCTIONS=true` in a disposable local database. The test-user seed requires a loopback PostgreSQL URL and explicit `TEST_USER_SEED_ENABLED=true`.
+Open `http://localhost:3000` (or the port Next.js reports). The twelve illustrative `.com`, `.ai`, `.xyz`, and `.org` names are bundled as a read-only **Demo Market**; no seed, database auction, bid, deadline, or invoice is created for them. The desktop marketplace defaults to a compact list; filters, watchlist, and card view are optional. The legacy `npm run seed:samples` command is a no-op. Existing sample rows are preserved in PostgreSQL but excluded from the public real-auction query. Reserved `.example`, `.test`, `.invalid`, and `.localhost` protocol-test listings are also excluded from public auction results. To test a live two-minute auction, create a seller listing with `ALLOW_SHORT_AUCTIONS=true` in a disposable local database. The test-user seed requires a loopback PostgreSQL URL and explicit `TEST_USER_SEED_ENABLED=true`.
 
 Production signup requires a real verified Resend sender and `EMAIL_VERIFICATION_MODE=resend`; without that configuration the API returns 503 instead of pretending to send email. Local development may sign up unverified accounts without labeling their email verified. Password recovery is not implemented.
 
 ## Neon and Vercel
 
-The owner created a Neon resource named `shadowbid` in Washington, D.C. East. The configured local pooled URL now has migrations 0000–0005; use `npm run db:check` to confirm it. In Vercel, set `DATABASE_URL`, `WORKER_SECRET`, `ZCASH_NETWORK=testnet`, `EMAIL_VERIFICATION_MODE=resend`, `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL`, then redeploy so the function receives the current environment. Keep wallet RPC credentials and wallet keys off Vercel. The wallet worker runs separately on WSL or an always-on host. See [deployment](docs/DEPLOYMENT.md) and [Zcash setup](docs/ZCASH_SETUP.md).
+The owner created a Neon resource named `shadowbid` in Washington, D.C. East. The configured pooled URL now has migrations 0000–0007; use `npm run db:check` to confirm it. The owner reports that the seven production variables below and Resend sending DNS are configured in Vercel, but email delivery has not been tested here. Keep wallet RPC credentials and wallet keys off Vercel. The wallet worker runs separately on WSL or an always-on host. See [deployment](docs/DEPLOYMENT.md) and [Zcash setup](docs/ZCASH_SETUP.md).
 
 ## Explore and verify
 
-Start the 60-second tour, browse the read-only Demo Domain Catalog, switch to Real auctions, create separate seller/bidder accounts, save a bid receipt, reveal during the next phase, and inspect the authorized winner checkout. `npm run test:e2e` exercises a fast two-bidder path against a disposable local PostgreSQL database. `npx tsx scripts/regtest-e2e.ts` can repeat the genuine local Z3 regtest receiving test after its explicit local-only setup. Fixture payment tests and the regtest test are **not** evidence of a public testnet transaction.
+Start the 60-second tour and open **Try a Private Auction** for an isolated two-bidder commit/reveal practice using real protocol code and no payment request. Browse the read-only Demo Market, then switch to Real auctions for seller-created names. Separate authenticated seller and bidder accounts are required to test real authorization, winner checkout, and manual transfer. Sellers can enter owned domains directly or stage a CSV on their dashboard; CSV names activate only after individual DNS TXT checks. `npm run test:e2e` exercises a fast two-bidder path against a disposable local PostgreSQL database. `npx tsx scripts/regtest-e2e.ts` can repeat the genuine local Z3 regtest receiving test after its explicit local-only setup. Fixture payment tests and the regtest test are **not** evidence of a public testnet transaction. See [judge practice](docs/JUDGE_SANDBOX.md).
 
 Read [auction protocol](docs/AUCTION_PROTOCOL.md), [privacy](docs/PRIVACY.md), [security](docs/SECURITY.md), [testing](docs/TESTING.md), and [integration status](docs/INTEGRATION_STATUS.md). The repository uses original ShadowBid code and the owner's supplied brand images; hackathon submission and final video remain owner actions.
