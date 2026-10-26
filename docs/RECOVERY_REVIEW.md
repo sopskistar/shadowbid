@@ -1,6 +1,6 @@
 # Recovery and release review — 2026-10-26
 
-This document records the pre-release recovery snapshot. No commit, push, deployment, submission, production database write, wallet reconfiguration, or Docker restart was performed during that review. The owner subsequently approved committing, pushing, and deploying the reviewed changes. Deployment results require separate live verification; historical references to pending files below describe the review snapshot.
+This document records the pre-release recovery snapshot. No commit, push, deployment, submission, production database write, wallet reconfiguration, or Docker restart was performed during that review. The owner subsequently approved committing, pushing, and deploying the reviewed changes. The approved deployment was verified as recorded below; historical references to pending files describe the pre-release review snapshot.
 
 ## Recovered state
 
@@ -92,3 +92,9 @@ No files are staged. Private environment files, wallets, keys, receipts, observa
 All applicable checks passed. After owner approval, the above source, tests, and accurate documentation form the proposed safe release. No production worker configuration or secret changes accompany it. After deployment, verify public routes, `state: disabled` worker health, and authenticated DNS/navigation behavior on desktop and mobile.
 
 There is no demonstrated build blocker to an honestly scoped Private Markets submission by the owner-supplied deadline, October 28, 2026, 23:59 UTC. Approval, final deployment verification, and submission preparation remain. A genuine completed production auction/final-price demonstration is still outstanding in the evidence record. A submission must explicitly disclose that public-testnet invoice-specific settlement and paid recovery are unproven, payments remain disabled, and registrar transfer is manual. This review does not independently verify hackathon eligibility or submission acceptance.
+
+## Approved release outcome
+
+The owner approved the reviewed release. Implementation commit `4c4b5510b5c2ccd519058afd9bc256b6e1a3d88a` was committed and pushed to `main`; [Vercel completed its deployment](https://vercel.com/sopskistars-projects/shadowbid/89uzsLrepTi7magP2uDTbF1UC3pn). Post-deployment public checks passed for the homepage, signup, judge sandbox, auctions, login, and roadmap. Live styles contain both UX fixes. Production worker health reports **disabled**, with no heartbeat. The before/after snapshot retained all eight auctions, their deadlines and DNS timestamps, and eight public commitments with no changes.
+
+The staged 17-file release passed another secret scan, and both eight-entry preservation manifests matched before commit. There were no migrations, wallet changes, secret rotations, payment-worker starts, or production data writes. Authenticated flows were validated locally; no production account was used. Submission and genuine invoice-specific settlement/paid recovery remain outstanding. This follow-up documentation records the successful implementation release; it changes no application behavior.
