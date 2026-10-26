@@ -1,6 +1,6 @@
 # Zecathon owner acceptance — GO / NO-GO
 
-Snapshot: 2026-10-25. **GO for judge practice and local protocol review. NO-GO for claiming public-testnet settlement or a production seller/bidder journey until the checks below pass.** Pushing, deploying, and submitting remain owner decisions.
+Updated: 2026-10-26. **GO for judge practice, local protocol review, and a submission that explicitly discloses payment limits. NO-GO for claiming public-testnet invoice settlement or a completed production auction/payment journey.** Pushing, deploying, and submitting remain owner decisions.
 
 ## Verified here
 
@@ -24,8 +24,10 @@ Snapshot: 2026-10-25. **GO for judge practice and local protocol review. NO-GO f
 | Gate | Current result |
 | --- | --- |
 | Judge sandbox, real cryptography, no financial path | GO: production session and local browser journey verified |
-| Public final winning price without public identity | GO locally after this change; requires owner deployment and smoke test |
-| Production signup and verified email | NO-GO until owner-controlled inbox test |
-| Production owned-domain auction and DNS activation | NO-GO until owner-authorized domain test |
-| Public testnet payment | NO-GO: pinned Zallet beta.1 cannot parse post-NU7 data; no TAZ or wallet-backed payment observed |
+| Public final winning price without public identity | Verified locally; production finalization evidence remains outstanding |
+| Production signup and verified email | Owner reports independent verified accounts and passing email DNS checks; fresh post-release inbox acceptance remains an owner check |
+| Production owned-domain auction and DNS activation | GO: original five DNS-verified listings preserved; fresh public read shows eight listings, six DNS-verified |
+| Public testnet invoice payment | NO-GO: genuine 1 TAZ shielded faucet receipt is verified, but neither assigned invoice has a matched payment, three-confirmation settlement, or paid recovery proof |
 | Mainnet money, escrow, registrar transfer automation | Out of scope; do not claim or use |
+
+The earlier “Verified here” bullets are historical observations. Current evidence and the pending release scope are in [DEMO_EVIDENCE.md](DEMO_EVIDENCE.md) and [RECOVERY_REVIEW.md](RECOVERY_REVIEW.md). The Zingolib receiver resolves the NU7 receiving limitation; it is not yet a reviewed production worker. Production payment authorization is locked in the pending source, while local synthetic tests remain separate from real on-chain evidence.

@@ -2,7 +2,7 @@
 
 **Submission track:** Zecathon Private Markets. ShadowBid applies sealed commitments and private reveals to owner-listed domain auctions. Bidding needs an account but no wallet or cryptocurrency. The winning account later receives an access-controlled Zcash invoice; domain transfer is manual.
 
-**Live site:** [shadowbid-ashy.vercel.app](https://shadowbid-ashy.vercel.app) · **Four-minute judge sandbox:** [/try](https://shadowbid-ashy.vercel.app/try) · **Deployed baseline captured:** `13ba683` on 2026-10-25 UTC. Later local UX edits in this workspace are not production evidence until separately approved and deployed.
+**Live site:** [shadowbid-ashy.vercel.app](https://shadowbid-ashy.vercel.app) · **Four-minute judge sandbox:** [/try](https://shadowbid-ashy.vercel.app/try) · **Deployed baseline captured:** `13ba683` on 2026-10-25 UTC. The invoice checkpoint `f16a87f` was subsequently pushed and successfully deployed (GitHub Vercel status verified on 2026-10-26). DNS retry, navigation spacing, and the production payment release lock remain local pending approval. These screenshots still show the earlier baseline.
 
 ## Genuine production activity
 
@@ -53,6 +53,12 @@ The isolated [judge sandbox](JUDGE_SANDBOX.md) runs two real browser commitments
 
 ## Validation recorded locally
 
-On 2026-10-26 UTC, ESLint, TypeScript, all **21** Vitest unit tests, all **15** Playwright browser tests (sequential run), and the optimized production build passed. Playwright used a disposable PostgreSQL database, a loopback-only app, and the locally installed Chromium binary; its invoice payment observations are fixtures, not live-chain evidence. Anonymous production requests to `/`, `/signup`, and `/try` had returned 200 in the earlier 2026-10-25 check, and the deployed signup HTML contained the verification Inbox/Spam guidance. Authenticated production navigation was tested locally with two separate accounts and refreshes; production account credentials were not used in this evidence pass. The 2026-10-26 documentation and recipient adapter are local changes pending owner approval; production post-deployment verification remains pending.
+On 2026-10-26 UTC, ESLint, TypeScript, all **21** Vitest unit tests, all **15** Playwright browser tests (sequential run), and the optimized production build passed. Playwright used a disposable PostgreSQL database, a loopback-only app, and the locally installed Chromium binary; its invoice payment observations are fixtures, not live-chain evidence. Anonymous production requests to `/`, `/signup`, and `/try` had returned 200 in the earlier 2026-10-25 check, and the deployed signup HTML contained the verification Inbox/Spam guidance. Authenticated production navigation was tested locally with two separate accounts and refreshes; production account credentials were not used in this evidence pass. The 2026-10-26 documentation and recipient adapter were committed and deployed in `f16a87f`; the later UX fixes remain local.
 
 The resumed invoice experiment also passed **15** Python observer tests and a browser check of both real receiver checkouts. App and observer restart preserved the associations and unpaid state; persistent HMAC replay denial was verified after app restart. Neither invoice received a matched note. The [continuation record](INVOICE_EXPERIMENT.md) records the initial timeout failures, successful reruns, exact evidence limits, and release gate.
+
+## Recovery review (2026-10-26)
+
+A fresh anonymous read found eight public auctions, six DNS-verified listings, and all eight previously recorded commitments. The original five listings remain present. Relative to the prior session's snapshot, only `leadatlas.xyz` gained a DNS verification timestamp; all recorded auction deadlines and commitments were retained. Worker health was `unconfigured`. The public homepage, signup, judge sandbox, and auction list returned 200. Public styles did not contain the pending DNS retry/navigation changes.
+
+The pending release locks worker authorization and payment instructions to explicitly configured loopback experiments. Vercel and remote database/app targets are rejected even with valid HMAC credentials. This is a code release gate until genuine invoice-specific payment, confirmations, and paid recovery have been demonstrated and production integration reviewed. No production payment activation or new chain evidence is claimed. See [recovery review](RECOVERY_REVIEW.md).

@@ -63,7 +63,9 @@ No production database connection or mutation, auction deadline change, commitme
 
 The source scripts, patch, tests, checkout copy improvement, ignore rules, and honest evidence documentation are suitable for review and a source commit after owner approval. The checkout UI improvement and documentation can be deployed after approval while the payment worker remains disabled. The loopback-only experiment scripts are not a production Zingolib worker; production activation requires the genuine invoice-payment gate and a separately reviewed production integration. Private artifacts, binaries, and regenerated test screenshots are excluded.
 
-## Uncommitted file inventory
+## Historical file inventory (committed as `f16a87f`)
+
+The following eight modified tracked files and nine new files were committed and pushed in `f16a87f` by the previous session. GitHub records its Vercel deployment as successful. The sections above describe the earlier experiment run; they are not a statement that these files remain uncommitted. See [recovery review](RECOVERY_REVIEW.md) for the current working tree.
 
 Eight modified tracked files:
 

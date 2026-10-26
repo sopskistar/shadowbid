@@ -5,6 +5,9 @@ import {validateShieldedAddress} from '../src/lib/crypto';
 import {walletSynced} from '../src/lib/zallet-status';
 
 const app=process.env.SHADOWBID_APP_URL||'http://localhost:3000';
+// No production sender until genuine invoice settlement and recovery are reviewed.
+const appUrl=new URL(app);
+if(process.env.VERCEL||process.env.VERCEL_ENV||appUrl.protocol!=='http:'||!['127.0.0.1','localhost','[::1]'].includes(appUrl.hostname))throw Error('Payment worker is locked to local experiments; production settlement is not verified');
 const secret=process.env.WORKER_SECRET||'';
 const configuredNetwork=process.env.ZCASH_NETWORK;
 const network:'testnet'|'regtest'=configuredNetwork==='regtest'?'regtest':'testnet';
@@ -32,7 +35,7 @@ async function zebra(method:string,params:unknown[]=[]):Promise<any>{
 async function api(path:string,body?:unknown){
   const method=body?'POST':'GET',raw=body?JSON.stringify(body):'',ts=String(Date.now()),nonce=randomBytes(16).toString('hex');
   const sig=createHmac('sha256',secret).update(`${ts}\n${nonce}\n${method}\n${path}\n${raw}`).digest('hex');
-  const r=await fetch(app+path,{method,signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json','x-sb-time':ts,'x-sb-nonce':nonce,'x-sb-signature':sig},body:body?raw:undefined});
+  const r=await fetch(app+path,{method,redirect:'error',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json','x-sb-time':ts,'x-sb-nonce':nonce,'x-sb-signature':sig},body:body?raw:undefined});
   if(!r.ok)throw Error(`${path}: HTTP ${r.status}`);return r.json();
 }
 async function tick(){
