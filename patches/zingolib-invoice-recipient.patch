@@ -1,0 +1,85 @@
+--- a/zingolib/src/wallet/summary.rs
++++ b/zingolib/src/wallet/summary.rs
+@@ -7,7 +7,8 @@
+ 
+ use pepper_sync::keys::transparent;
+ use pepper_sync::wallet::{
+-    KeyIdInterface, NoteInterface, OutgoingNoteInterface, OutputInterface, TransparentCoin,
++    IronwoodNote, KeyIdInterface, NoteInterface, OrchardNote, OutgoingNoteInterface, OutputInterface,
++    SaplingNote, TransparentCoin,
+ };
+ 
+ use super::LightWallet;
+@@ -19,6 +20,37 @@
+ };
+ 
+ pub mod data;
++
++/// Resolve a decrypted note to an address recorded by this wallet. Unknown
++/// recipients deliberately stay unknown; callers must never infer an invoice
++/// from a transaction ID or account ID alone.
++pub trait InvoiceNoteRecipient: NoteInterface {
++    fn recipient_unified_address(&self, wallet: &LightWallet) -> Option<String>;
++}
++
++impl InvoiceNoteRecipient for IronwoodNote {
++    fn recipient_unified_address(&self, wallet: &LightWallet) -> Option<String> {
++        wallet
++            .is_orchard_address_in_unified_addresses(&self.note().recipient())
++            .map(|(_, address)| address.encode(&wallet.chain_type))
++    }
++}
++
++impl InvoiceNoteRecipient for OrchardNote {
++    fn recipient_unified_address(&self, wallet: &LightWallet) -> Option<String> {
++        wallet
++            .is_orchard_address_in_unified_addresses(&self.note().recipient())
++            .map(|(_, address)| address.encode(&wallet.chain_type))
++    }
++}
++
++impl InvoiceNoteRecipient for SaplingNote {
++    fn recipient_unified_address(&self, wallet: &LightWallet) -> Option<String> {
++        wallet
++            .is_sapling_address_in_unified_addresses(&self.note().recipient())
++            .map(|(_, address)| address.encode(&wallet.chain_type))
++    }
++}
+ 
+ impl LightWallet {
+     /// Returns summaries of all transactions in the wallet, sorted by confirmation status (confirmed first) and then
+@@ -290,7 +322,7 @@
+     #[must_use]
+     pub fn note_summaries<N>(&self, include_spent_notes: bool) -> NoteSummaries
+     where
+-        N: NoteInterface<KeyId = pepper_sync::keys::KeyId>,
++        N: InvoiceNoteRecipient<KeyId = pepper_sync::keys::KeyId>,
+     {
+         let note_summaries = self
+             .wallet_outputs::<N>()
+@@ -321,6 +353,7 @@
+                     output_index: note.output_id().output_index(),
+                     account_id: note.key_id().account_id,
+                     scope: note.key_id().scope.into(),
++                    recipient_unified_address: note.recipient_unified_address(self),
+                 }
+             })
+             .collect();
+--- a/zingolib/src/wallet/summary/data.rs
++++ b/zingolib/src/wallet/summary/data.rs
+@@ -345,6 +345,7 @@
+     pub output_index: u32,
+     pub account_id: zip32::AccountId,
+     pub scope: Scope,
++    pub recipient_unified_address: Option<String>,
+ }
+ 
+ impl std::fmt::Display for NoteSummary {
+@@ -395,6 +396,7 @@
+             "output_index" => note.output_index,
+             "account_id" => u32::from(note.account_id),
+             "scope" => note.scope.to_string(),
++            "recipient_unified_address" => note.recipient_unified_address,
+         }
+     }
+ }

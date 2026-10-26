@@ -152,5 +152,9 @@ vite.config.ts.timestamp-*
 /test-results/
 /playwright-report/
 
+# Python wallet observer caches
+__pycache__/
+*.pyc
+
 # Editor swap files, which may contain private environment values
 *.swp

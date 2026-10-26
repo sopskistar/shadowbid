@@ -14,7 +14,7 @@
 | Email verification | Resend signup and rate-limited resend implemented; owner reports live delivery and Gmail SPF/DKIM/DMARC PASS, with some Spam placement |
 | Zallet receiver assignment and wallet note monitoring | Implemented; tested against real local Z3 regtest RPC |
 | Real regtest payment recognized | **Yes:** shielded receiver note, Zebra chain check, three confirmations. Transparent coinbase source and overpayment; see status report |
-| Real public testnet payment recognized | **No:** a separate NU7-compatible Zingolib receiver is synchronized and wallet-controlled, but no incoming note or three-confirmation public-testnet payment has been observed. Zallet beta.1 remains stopped |
+| Real public testnet receiving recognized | **Yes, isolated faucet deposit:** NU7-compatible Zingolib decrypted a 1 TAZ Ironwood note at block 4,541,930; Zebra verified the transaction in the active chain with over three confirmations. **Invoice-specific settlement remains unverified.** Zallet beta.1 remains stopped. See [demo evidence](docs/DEMO_EVIDENCE.md). |
 | DNS TXT control check | Implemented; external DNS evidence test pending |
 | Vercel, registrar automation, escrow, NFTs/art/real estate | Public Vercel routes pass a smoke check; its exact Production database target and authenticated flows remain unverified. Other features are planned only |
 
