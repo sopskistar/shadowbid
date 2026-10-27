@@ -10,5 +10,5 @@ export default defineConfig([
   {files:['src/app/checkout/**/page.tsx'],rules:{'@next/next/no-img-element':'off'}},
   // Zallet beta JSON-RPC response fields differ between shipped versions.
   {files:['worker/zallet.ts'],rules:{'@typescript-eslint/no-explicit-any':'off'}},
-  globalIgnores(['.next/**','node_modules/**','drizzle/**','screenshots/**','test-results/**','playwright-report/**'])
+  globalIgnores(['demo-video/**','.next/**','node_modules/**','drizzle/**','screenshots/**','test-results/**','playwright-report/**'])
 ]);

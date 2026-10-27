@@ -45,14 +45,31 @@ test('synthetic invoice snapshots handle excess, duplicate, replay, cross-invoic
   expect((await send({...first,notes:[note,note]})).status()).toBe(400);
   expect((await send({...first,notes:[{...note,amountZats:'401'}]})).status()).toBe(409);
   expect((await send({...second,notes:[note]})).status()).toBe(409);
+  expect((await send({...first,notes:[{...note,amountZats:'2100000000000001'}]})).status()).toBe(400);
+  expect((await send({...first,notes:[{...note,outIndex:2147483648}]})).status()).toBe(400);
   const replay=signed(full);
   expect((await request.post('/api/worker/observe',replay)).status()).toBe(200);
   expect((await request.post('/api/worker/observe',replay)).status()).toBe(401);
   expect(await (await send({...first,notes:[]})).json()).toMatchObject({status:'awaiting',confirmedZats:'0'});
+  const rolledBack=await sql`select confirmations from payment_notes where invoice_id=${first.id}`;
+  expect(rolledBack.every(n=>n.confirmations===0)).toBe(true);
   expect(await (await send(full)).json()).toMatchObject({status:'confirmed',confirmedZats:'1001'});
   const [count]=await sql`select count(*)::int as total from payment_notes where invoice_id=${first.id}`;
   expect(count.total).toBe(3);
   const [untouched]=await sql`select status,paid_zats from invoices where id=${second.id}`;
   expect(untouched.status).toBe('awaiting');expect(String(untouched.paid_zats)).toBe('0');
+  // A note first detected before expiry may acquire confirmations afterward.
+  // New late notes cannot unlock the invoice or top up an earlier partial.
+  const expiring=await fixture();
+  const pending={...note,txid:randomBytes(32).toString('hex'),amountZats:'1000',confirmations:0};
+  expect(await (await send({...expiring,notes:[pending]})).json()).toMatchObject({status:'detected',confirmedZats:'0'});
+  await sql`update invoices set deadline=now()-interval '1 second' where id=${expiring.id}`;
+  const late={...pending,txid:randomBytes(32).toString('hex'),confirmations:3};
+  expect(await (await send({...expiring,notes:[pending,late]})).json()).toMatchObject({status:'detected',confirmedZats:'0'});
+  expect(await (await send({...expiring,notes:[{...pending,confirmations:3},late]})).json()).toMatchObject({status:'confirmed',confirmedZats:'1000'});
+  const [lateCount]=await sql`select count(*)::int as total from payment_notes where invoice_id=${expiring.id}`;
+  expect(lateCount.total).toBe(1);
+  await sql`update invoices set deadline=now()-interval '1 second' where id=${second.id}`;
+  expect(await (await send({...second,notes:[late]})).json()).toMatchObject({status:'awaiting',confirmedZats:'0'});
 });
 test.afterAll(async()=>{await sql.end();});

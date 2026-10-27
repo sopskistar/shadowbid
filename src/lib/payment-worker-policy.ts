@@ -1,5 +1,5 @@
-// Release lock: public-testnet invoice settlement and paid recovery are unproven.
-// Production support requires a reviewed code change after that evidence exists.
+// Release lock: local public-testnet settlement is verified; external hosting is not.
+// Production support still requires a separately reviewed and approved release.
 export function localPaymentWorkerAllowed(){
   if(process.env.VERCEL||process.env.VERCEL_ENV)return false;
   if(process.env.LOCAL_AUTH_BYPASS!=='true'||process.env.ALLOW_SHORT_AUCTIONS!=='true')return false;

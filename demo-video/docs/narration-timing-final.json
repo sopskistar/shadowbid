@@ -1,0 +1,186 @@
+[
+  {
+    "scene": "problem",
+    "file": "audio/mix-problem-0.wav",
+    "start": 0.7,
+    "duration": 3.04425,
+    "text": "Mara has found the name for her next business.",
+    "speed": 1
+  },
+  {
+    "scene": "problem",
+    "file": "audio/mix-problem-1.wav",
+    "start": 5.54425,
+    "duration": 4.370417,
+    "text": "But in a public auction, every offer tells her competitors something.",
+    "speed": 1
+  },
+  {
+    "scene": "question",
+    "file": "audio/mix-question-0.wav",
+    "start": 12.7,
+    "duration": 3.168292,
+    "text": "Her interest. Her budget. Her next move.",
+    "speed": 1
+  },
+  {
+    "scene": "question",
+    "file": "audio/mix-question-1.wav",
+    "start": 17.668292,
+    "duration": 2.193875,
+    "text": "What if her offer stayed hers?",
+    "speed": 1
+  },
+  {
+    "scene": "product",
+    "file": "audio/mix-product-0.wav",
+    "start": 23.7,
+    "duration": 1.840042,
+    "text": "Meet ShadowBid.",
+    "speed": 1
+  },
+  {
+    "scene": "product",
+    "file": "audio/mix-product-1.wav",
+    "start": 25.877542,
+    "duration": 4.491,
+    "text": "A privacy-first auction marketplace, launching with domain names.",
+    "speed": 1
+  },
+  {
+    "scene": "product",
+    "file": "audio/mix-product-2.wav",
+    "start": 30.706041999999997,
+    "duration": 5.371292,
+    "text": "Real owner listings. DNS control checks. Public commitment counts.",
+    "speed": 1
+  },
+  {
+    "scene": "bid",
+    "file": "audio/mix-bid-0.wav",
+    "start": 37.7,
+    "duration": 3.646583,
+    "text": "In this isolated demo, Mara seals an offer.",
+    "speed": 1
+  },
+  {
+    "scene": "bid",
+    "file": "audio/mix-bid-1.wav",
+    "start": 42.659083,
+    "duration": 5.539917,
+    "text": "Her browser hashes the amount with a random secret, bound to the auction and bidder.",
+    "speed": 1
+  },
+  {
+    "scene": "bid",
+    "file": "audio/mix-bid-2.wav",
+    "start": 49.511500000000005,
+    "duration": 3.562042,
+    "text": "No wallet connection. No on-chain bidding fee.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal",
+    "file": "audio/mix-reveal-0.wav",
+    "start": 54.7,
+    "duration": 3.644167,
+    "text": "The downloaded receipt is her proof. Keep it private.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal",
+    "file": "audio/mix-reveal-1.wav",
+    "start": 60.144167,
+    "duration": 4.461792,
+    "text": "In the timed practice auction, a changed receipt is rejected.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal",
+    "file": "audio/mix-reveal-2.wav",
+    "start": 66.405959,
+    "duration": 2.51525,
+    "text": "The saved original verifies.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal",
+    "file": "audio/mix-reveal-3.wav",
+    "start": 70.721209,
+    "duration": 2.84225,
+    "text": "These waiting periods are edited down.",
+    "speed": 1
+  },
+  {
+    "scene": "result",
+    "file": "audio/mix-result-0.wav",
+    "start": 76.7,
+    "duration": 2.739042,
+    "text": "The highest eligible reveal wins.",
+    "speed": 1
+  },
+  {
+    "scene": "result",
+    "file": "audio/mix-result-1.wav",
+    "start": 79.801542,
+    "duration": 6.713667,
+    "text": "The final price is public. Bidder identity and losing offers stay private from other participants.",
+    "speed": 1
+  },
+  {
+    "scene": "result",
+    "file": "audio/mix-result-2.wav",
+    "start": 86.877709,
+    "duration": 3.19175,
+    "text": "The trusted operator can see revealed bids.",
+    "speed": 1
+  },
+  {
+    "scene": "payment",
+    "file": "audio/mix-payment-0.wav",
+    "start": 91.7,
+    "duration": 2.391542,
+    "text": "The winner gets a private invoice.",
+    "speed": 1
+  },
+  {
+    "scene": "payment",
+    "file": "audio/mix-payment-1.wav",
+    "start": 94.541542,
+    "duration": 3.917708,
+    "text": "Our wallet verified a real public-testnet deposit.",
+    "speed": 1
+  },
+  {
+    "scene": "payment",
+    "file": "audio/mix-payment-2.wav",
+    "start": 98.90925000000001,
+    "duration": 5.1575,
+    "text": "Invoice settlement remains unverified. Production payments stay disabled.",
+    "speed": 1
+  },
+  {
+    "scene": "closing",
+    "file": "audio/mix-closing-0.wav",
+    "start": 105.7,
+    "duration": 3.508875,
+    "text": "Domains today. Broader private markets, tomorrow.",
+    "speed": 1.02734375
+  },
+  {
+    "scene": "closing",
+    "file": "audio/mix-closing-1.wav",
+    "start": 109.40887500000001,
+    "duration": 3.690042,
+    "text": "ShadowBid. Private auctions. Public outcomes.",
+    "speed": 1.02734375
+  },
+  {
+    "scene": "closing",
+    "file": "audio/mix-closing-3.wav",
+    "start": 113.298917,
+    "duration": 2.215417,
+    "text": "Try the interactive demo.",
+    "speed": 1.02734375
+  }
+]

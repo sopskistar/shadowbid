@@ -1,0 +1,117 @@
+[
+  {
+    "text": "Mara has found the name for her next business.",
+    "startMs": 700,
+    "endMs": 3744
+  },
+  {
+    "text": "But in a public auction, every offer tells her competitors something.",
+    "startMs": 5544,
+    "endMs": 9915
+  },
+  {
+    "text": "Her interest. Her budget. Her next move.",
+    "startMs": 12700,
+    "endMs": 15868
+  },
+  {
+    "text": "What if her offer stayed hers?",
+    "startMs": 17668,
+    "endMs": 19862
+  },
+  {
+    "text": "Meet ShadowBid.",
+    "startMs": 23700,
+    "endMs": 25540
+  },
+  {
+    "text": "A privacy-first auction marketplace, launching with domain names.",
+    "startMs": 25878,
+    "endMs": 30369
+  },
+  {
+    "text": "Real owner listings. DNS control checks. Public commitment counts.",
+    "startMs": 30706,
+    "endMs": 36077
+  },
+  {
+    "text": "In this isolated demo, Mara seals an offer.",
+    "startMs": 37700,
+    "endMs": 41347
+  },
+  {
+    "text": "Her browser hashes the amount with a random secret, bound to the auction and bidder.",
+    "startMs": 42659,
+    "endMs": 48199
+  },
+  {
+    "text": "No wallet connection. No on-chain bidding fee.",
+    "startMs": 49512,
+    "endMs": 53074
+  },
+  {
+    "text": "The downloaded receipt is her proof. Keep it private.",
+    "startMs": 54700,
+    "endMs": 58344
+  },
+  {
+    "text": "In the timed practice auction, a changed receipt is rejected.",
+    "startMs": 60144,
+    "endMs": 64606
+  },
+  {
+    "text": "The saved original verifies.",
+    "startMs": 66406,
+    "endMs": 68921
+  },
+  {
+    "text": "These waiting periods are edited down.",
+    "startMs": 70721,
+    "endMs": 73563
+  },
+  {
+    "text": "The highest eligible reveal wins.",
+    "startMs": 76700,
+    "endMs": 79439
+  },
+  {
+    "text": "The final price is public. Bidder identity and losing offers stay private from other participants.",
+    "startMs": 79802,
+    "endMs": 86515
+  },
+  {
+    "text": "The trusted operator can see revealed bids.",
+    "startMs": 86878,
+    "endMs": 90069
+  },
+  {
+    "text": "The winner gets a private invoice.",
+    "startMs": 91700,
+    "endMs": 94092
+  },
+  {
+    "text": "Our wallet verified a real public-testnet deposit.",
+    "startMs": 94542,
+    "endMs": 98459
+  },
+  {
+    "text": "Invoice settlement remains unverified. Production payments stay disabled.",
+    "startMs": 98909,
+    "endMs": 104067
+  },
+  {
+    "text": "Domains today. Broader private markets, tomorrow.",
+    "startMs": 105700,
+    "endMs": 109209
+  },
+  {
+    "text": "ShadowBid. Private auctions. Public outcomes.",
+    "startMs": 109409,
+    "endMs": 113099
+  },
+  {
+    "text": "Try the interactive demo.",
+    "startMs": 113299,
+    "endMs": 115514
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "name": "live-inventory",
+    "source": "production",
+    "source_start": 26.766,
+    "source_duration": 8,
+    "output_duration": 8,
+    "time_compressed": false,
+    "last_frame_hold": false
+  },
+  {
+    "name": "live-detail",
+    "source": "production",
+    "source_start": 40.239,
+    "source_duration": 6,
+    "output_duration": 6,
+    "time_compressed": false,
+    "last_frame_hold": false
+  },
+  {
+    "name": "live-result",
+    "source": "production",
+    "source_start": 40.239,
+    "source_duration": 6.1,
+    "output_duration": 11,
+    "time_compressed": false,
+    "last_frame_hold": true
+  },
+  {
+    "name": "seal-bid",
+    "source": "bidder",
+    "source_start": 4.683,
+    "source_duration": 13,
+    "output_duration": 17,
+    "time_compressed": false,
+    "last_frame_hold": true
+  },
+  {
+    "name": "receipt",
+    "source": "practice",
+    "source_start": 7.377999999999999,
+    "source_duration": 5,
+    "output_duration": 5,
+    "time_compressed": false,
+    "last_frame_hold": false
+  },
+  {
+    "name": "time-compressed",
+    "source": "practice",
+    "source_start": 19.219,
+    "source_duration": 115.62800000000001,
+    "output_duration": 3,
+    "time_compressed": true,
+    "last_frame_hold": false
+  },
+  {
+    "name": "invalid-reveal",
+    "source": "practice",
+    "source_start": 137.475,
+    "source_duration": 5.2,
+    "output_duration": 6,
+    "time_compressed": false,
+    "last_frame_hold": true
+  },
+  {
+    "name": "valid-reveal",
+    "source": "practice",
+    "source_start": 142.46,
+    "source_duration": 8,
+    "output_duration": 8,
+    "time_compressed": false,
+    "last_frame_hold": false
+  },
+  {
+    "name": "practice-winner",
+    "source": "practice",
+    "source_start": 255.168,
+    "source_duration": 4,
+    "output_duration": 4,
+    "time_compressed": false,
+    "last_frame_hold": false
+  },
+  {
+    "name": "public-result",
+    "source": "public-result",
+    "source_start": 2.504,
+    "source_duration": 6.5,
+    "output_duration": 11,
+    "time_compressed": false,
+    "last_frame_hold": true
+  },
+  {
+    "name": "checkout",
+    "source": "bidder",
+    "source_start": 38.46,
+    "source_duration": 5,
+    "output_duration": 5,
+    "time_compressed": false,
+    "last_frame_hold": false
+  }
+]

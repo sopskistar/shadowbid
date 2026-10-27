@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-10-27T09:31:07.701Z",
+  "target": "https://shadowbid-ashy.vercel.app/try",
+  "actualServerDeadlines": true,
+  "downloadedReceipts": 2,
+  "tamperedReceiptRejected": true,
+  "deterministicWinner": "B",
+  "validReveals": 2,
+  "finishedAt": "2026-10-27T09:35:13.036Z",
+  "noPaymentReceiver": true
+}

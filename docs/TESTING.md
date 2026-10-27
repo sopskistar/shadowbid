@@ -1,5 +1,7 @@
 # Testing
 
+**Current release results:** see [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md). The dated sections below preserve earlier milestones, including superseded unpaid states. Invoice A's completed public-testnet payment must not be repeated.
+
 Use an isolated PostgreSQL 16 database. Set `DATABASE_URL`, `WORKER_SECRET` (32+ characters), `ALLOW_SHORT_AUCTIONS=true`, `LOCAL_AUTH_BYPASS=true` when using `next start` locally, and `ZCASH_NETWORK=testnet`, and a loopback HTTP `PUBLIC_APP_URL`. Apply migrations with `npm run db:migrate`. The Demo Market is static and needs no database seed. Browser tests now require `E2E_ISOLATED_DB=true` **and** loopback PostgreSQL/app URLs; otherwise they refuse database writes. Never point protocol tests or test-user seeding at production Neon.
 
 Run:
@@ -43,3 +45,21 @@ The previous session's 18-test browser run has a preserved passing result. Recov
 The pending recovery changes also reject missing DNS challenges on the server and test authenticated non-owner denial. Worker requests now require an explicit local experiment configuration. Production/Vercel requests are rejected before replay-nonce writes, and checkout instructions stay hidden even with a fresh heartbeat. The Zallet worker refuses remote app URLs and redirects. No migration, production secret rotation, or wallet reconfiguration is needed. Full current validation results are recorded in [RECOVERY_REVIEW.md](RECOVERY_REVIEW.md).
 
 Final recovery validation: ESLint, TypeScript, **33/33** Vitest, **15/15** Python observer tests, **18/18** Playwright (2.8 minutes, one worker), and the production build passed. Sandbox-only browser/socket and build subprocess failures passed on permitted reruns. Desktop/mobile UX screenshots were visually inspected; regenerated tracked screenshots were preserved outside Git and originals restored. No new chain-payment evidence was produced.
+
+## Video continuation validation (2026-10-26)
+
+The recovered uncommitted homepage wording and video exclusions passed ESLint, TypeScript (`--noEmit --incremental false`), **33/33 Vitest**, **15/15 Python observer tests**, the production build, and **18/18 Playwright tests in 3.6 minutes** with one worker. Video source separately passed its own ESLint and TypeScript checks. Existing screenshots were copied before browser tests and restored afterward; the new test captures remain in `/tmp/shadowbid-screenshots-preserved-cxooz9st` and browser traces use `test-results/recovery-current`.
+
+The first browser invocation accidentally let npm consume `--workers=1` instead of forwarding it to Playwright. It ran four workers, encountered a navigation timeout, and was interrupted to reduce contention with video rendering. The corrected `npm run test:e2e -- --workers=1` invocation passed all 18 tests. Sandbox restrictions also blocked the initial build subprocess and browser listener; permitted reruns passed. These failed/interrupted attempts are not counted as successful validation.
+
+Anonymous production checks returned HTTP 200 for `/`, `/try`, and `/api/worker/health`; payment health remains `disabled`. GitHub's unauthenticated repository API returned `private: false`. No production mutations or new payment evidence accompanied these checks.
+
+## Final video and settlement continuation (2026-10-27 UTC)
+
+The preserved 117.013-second H.264/AAC export passed full decode, codec/dimension/duration checks, caption timing, black/silence detection, Chromium playback/seeking, and sampled visual review. See `demo-video/docs/VALIDATION.md`. No re-render or asset replacement was necessary; human listening review and public upload remain owner steps.
+
+The settlement changes passed the production build, ESLint, TypeScript, 33 Vitest tests, 21 Python observer/acceptance tests, and all 18 Playwright tests (3.3 minutes, one worker). The full suite includes underpayment, excess, duplicate/conflicting notes, wrong invoice association, HMAC authorization/replay, reorg rollback and replacement receipts, late-payment gating, paid-checkout controls, and account restrictions. Seven pinned upstream Rust wallet-summary tests passed after the test-only dependencies were downloaded using working host networking. Existing screenshots were preserved and restored; fresh captures are in `/tmp/shadowbid-screenshots-preserved-pdvdvbiz`.
+
+The real two-invoice acceptance runner intentionally failed: genuine wallet observations still contain only the earlier faucet note, which belongs to neither invoice. No synthetic payment was supplied to those invoices. A passing test suite is not the missing public-testnet paid-invoice/restart proof.
+
+The genuine receiver checkout check also passed for both original invoices under fresh monitoring, including independent QR decoding with `jsqr` 1.4.0 and exact URI comparison. The decoder was installed under `/tmp`, not added to the app. No paid state was simulated in the real experiment. Temporary test app and observer processes were stopped afterward; the scanner remains running.

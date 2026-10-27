@@ -12,9 +12,29 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("invoice_experiment", ROOT / "scripts/receiver-invoices.py")
 worker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(worker)
+acceptance_spec = importlib.util.spec_from_file_location('settlement_acceptance', ROOT / 'scripts/check-invoice-settlement.py')
+acceptance = importlib.util.module_from_spec(acceptance_spec)
+acceptance_spec.loader.exec_module(acceptance)
 
 
 class MonitorTests(unittest.TestCase):
+    def test_offline_calculated_and_failed_notes_are_not_received_payments(self):
+        receiver = worker.receiver
+        groups = {p+'_notes': {'note_summaries': []} for p in ('ironwood', 'orchard', 'sapling')}
+        groups['ironwood_notes']['note_summaries'] = [
+            {'status': status+' at block height 100'} for status in ('calculated', 'failed')]
+        raw = ('{"height":102}\n'+json.dumps([{'encoded_address': receiver.RECEIVER}])+'\n'+
+               json.dumps(groups)+'\nZingo CLI quit successfully.').encode()
+        with patch.object(receiver, 'docker', return_value=raw):
+            self.assertEqual(receiver.scan_snapshot('synthetic-image')[1], [])
+
+    def test_snapshot_batch_requires_three_complete_responses_and_clean_exit(self):
+        raw = b'{"height":42}\n[]\n{"ironwood_notes":{}}\nZingo CLI quit successfully.\n'
+        self.assertEqual(worker.receiver.decode_snapshot(raw)[0], {'height':42})
+        for broken in [raw.replace(b'[]\n', b''), raw + b'error', raw.replace(b'[]', b'{}')]:
+            with self.subTest(response=broken), self.assertRaises(ValueError):
+                worker.receiver.decode_snapshot(broken)
+
     def setUp(self):
         self.binding = {"address": "utest1syntheticreceiver", "wallet_account_id": 0, "address_index": 1}
         self.note = {"pool": "ironwood", "recipient_unified_address": self.binding["address"],
@@ -155,6 +175,59 @@ class MonitorTests(unittest.TestCase):
                 ("amountZats", "2000000"), ("id", "another-invoice")):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 worker.validate_binding(binding, config, {**invoice, field: value})
+
+    def acceptance_fixture(self):
+        bindings = [{**self.binding, 'invoice_id': 'a', 'binding_id': 'binding-a', 'amount_zats': '1000000'},
+                    {**self.binding, 'invoice_id': 'b', 'binding_id': 'binding-b', 'amount_zats': '2000000',
+                     'address': 'utest1secondsynthetic', 'address_index': 2}]
+        self.snapshot['owned_addresses'].append({**self.snapshot['owned_addresses'][0],
+            'encoded_address': bindings[1]['address'], 'address_index': 2})
+        rows = [{'id': b['invoice_id'], 'address': b['address'], 'wallet_account': b['binding_id'],
+                 'network': 'testnet', 'amount_zats': b['amount_zats'], 'status': 'awaiting',
+                 'paid_zats': '0', 'notes': []} for b in bindings]
+        rows[0].update(status='confirmed', paid_zats='1000000', notes=[{
+            'txid': self.note['txid'], 'out_index': 0, 'amount_zats': '1000000', 'confirmations': 3}])
+        return bindings, rows
+
+    def test_acceptance_checks_wallet_and_database_identity(self):
+        bindings, rows = self.acceptance_fixture()
+        self.assertEqual(acceptance.verify_paid_fixture(self.snapshot, bindings, rows),
+                         [[('a' * 64, 0, '1000000')]])
+        rows[0]['notes'][0]['txid'] = 'e' * 64
+        with self.assertRaisesRegex(ValueError, 'Database notes'):
+            acceptance.verify_paid_fixture(self.snapshot, bindings, rows)
+
+    def test_acceptance_cannot_pass_on_faucet_or_unpaid_invoice(self):
+        bindings, rows = self.acceptance_fixture()
+        self.snapshot['notes'] = []
+        with self.assertRaisesRegex(ValueError, 'Invoice A lacks'):
+            acceptance.verify_paid_fixture(self.snapshot, bindings, rows)
+
+    def test_acceptance_rejects_underconfirmed_and_inexact_payments(self):
+        bindings, rows = self.acceptance_fixture()
+        for field, value in [('value_zats', 999999), ('value_zats', 1000001), ('confirmations', 2)]:
+            snapshot = copy.deepcopy(self.snapshot)
+            snapshot['notes'][0][field] = value
+            with self.assertRaises(ValueError):
+                acceptance.verify_paid_fixture(snapshot, bindings, rows)
+
+    def test_acceptance_requires_invoice_b_unpaid(self):
+        bindings, rows = self.acceptance_fixture()
+        rows[1].update(status='confirmed', paid_zats='2000000')
+        with self.assertRaisesRegex(ValueError, 'Invoice B'):
+            acceptance.verify_paid_fixture(self.snapshot, bindings, rows)
+
+    def test_acceptance_rejects_duplicate_persisted_notes(self):
+        bindings, rows = self.acceptance_fixture()
+        rows[0]['notes'] *= 2
+        with self.assertRaisesRegex(ValueError, 'Database notes'):
+            acceptance.verify_paid_fixture(self.snapshot, bindings, rows)
+
+    def test_acceptance_rejects_rebound_invoice(self):
+        bindings, rows = self.acceptance_fixture()
+        rows[0]['address'] = bindings[1]['address']
+        with self.assertRaisesRegex(ValueError, 'mapping'):
+            acceptance.verify_paid_fixture(self.snapshot, bindings, rows)
 
 
 if __name__ == "__main__":

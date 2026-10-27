@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-27T13:59:32.522212+00:00",
+  "transaction_id": "8cbffc50de4acdf7d9705a940c5cb8adad932715f96f275e0300e96f3e5a5206",
+  "amount_zats": 1000000,
+  "invoice_a": "Paid",
+  "invoice_b": "Unpaid",
+  "invoice_a_note_count": 1,
+  "wallet_receiver_matches_approved_invoice": true,
+  "fresh_offline_wallet_processes": 2,
+  "identical_wallet_notes_after_reload": true,
+  "chain": "test",
+  "block_height": 4546995,
+  "zebra_tip": 4547578,
+  "active_chain_confirmations": 584,
+  "wallet_height": 4547554,
+  "wallet_lag_blocks": 24,
+  "production_collection_enabled": false,
+  "fresh_online_settlement_gate": "failed: scanner behind Zebra; no health or payment observations fabricated"
+}

@@ -1,0 +1,29 @@
+{
+  "capturedAt": "2026-10-26T18:20:23.677Z",
+  "production": {
+    "auctionCount": 8,
+    "verified": 6,
+    "commitments": 8,
+    "finalized": [
+      {
+        "domain": "domscout.xyz",
+        "clearingZats": "12000000",
+        "completedAt": null
+      }
+    ],
+    "health": {
+      "state": "disabled",
+      "lastSeenAt": null,
+      "network": "testnet",
+      "walletReportedSynced": false,
+      "chainCrossChecked": false
+    }
+  },
+  "checks": [
+    "Modified practice receipt rejected by actual server",
+    "Practice actual 2-minute commit + 2-minute reveal deadlines; highest valid reveal B = 0.03 practice ZEC",
+    "Independent accounts: two valid reveals, server finalization, public 0.03 ZEC result without account identity",
+    "Winner-only local invoice; other bidder denied; payment instructions hidden; no payment simulated"
+  ],
+  "practiceRealDeadlines": true
+}

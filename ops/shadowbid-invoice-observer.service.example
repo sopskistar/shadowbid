@@ -1,0 +1,31 @@
+# Reviewed template only. Not installed or enabled by this task.
+# Dedicated host: shadowbid must have UID 1000, matching the pinned CLI mount user.
+[Unit]
+Description=ShadowBid isolated public-testnet observer
+Requires=docker.service shadowbid-invoice-app.service
+After=network-online.target docker.service shadowbid-invoice-app.service
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=shadowbid
+Group=shadowbid
+SupplementaryGroups=docker
+WorkingDirectory=/srv/shadowbid
+ExecStart=/usr/bin/python3 /srv/shadowbid/scripts/run-invoice-experiment.py watch
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=60
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/shadowbid/.env.invoice-experiment /srv/shadowbid/.env.nu7-receiver
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

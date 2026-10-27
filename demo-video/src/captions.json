@@ -1,0 +1,198 @@
+[
+  {
+    "text": "Mara has found the name for her next business.",
+    "startMs": 700,
+    "endMs": 3744,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "But in a public auction, every offer tells her competitors",
+    "startMs": 5544,
+    "endMs": 9517,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "something.",
+    "startMs": 9517,
+    "endMs": 9915,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Her interest. Her budget. Her next move.",
+    "startMs": 12700,
+    "endMs": 15868,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "What if her offer stayed hers?",
+    "startMs": 17668,
+    "endMs": 19862,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Meet ShadowBid.",
+    "startMs": 23700,
+    "endMs": 25540,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "A privacy-first auction marketplace, launching with domain names.",
+    "startMs": 25878,
+    "endMs": 30369,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Real owner listings. DNS control checks. Public commitment counts.",
+    "startMs": 30706,
+    "endMs": 36077,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "In this isolated demo, Mara seals an offer.",
+    "startMs": 37700,
+    "endMs": 41347,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Her browser hashes the amount with a random secret, bound to the",
+    "startMs": 42659,
+    "endMs": 47091,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "auction and bidder.",
+    "startMs": 47091,
+    "endMs": 48199,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "No wallet connection. No on-chain bidding fee.",
+    "startMs": 49512,
+    "endMs": 53074,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The downloaded receipt is her proof. Keep it private.",
+    "startMs": 54700,
+    "endMs": 58344,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "In the timed practice auction, a changed receipt is rejected.",
+    "startMs": 60144,
+    "endMs": 64606,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The saved original verifies.",
+    "startMs": 66406,
+    "endMs": 68921,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "These waiting periods are edited down.",
+    "startMs": 70721,
+    "endMs": 73563,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The highest eligible reveal wins.",
+    "startMs": 76700,
+    "endMs": 79439,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The final price is public. Bidder identity and losing offers stay",
+    "startMs": 79802,
+    "endMs": 84725,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "private from other participants.",
+    "startMs": 84725,
+    "endMs": 86515,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The trusted operator can see revealed bids.",
+    "startMs": 86878,
+    "endMs": 90069,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The winner gets a private invoice.",
+    "startMs": 91700,
+    "endMs": 94092,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Our wallet verified a real public-testnet deposit.",
+    "startMs": 94542,
+    "endMs": 98459,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Invoice settlement remains unverified. Production payments stay",
+    "startMs": 98909,
+    "endMs": 103422,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "disabled.",
+    "startMs": 103422,
+    "endMs": 104067,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Domains today. Broader private markets, tomorrow.",
+    "startMs": 105700,
+    "endMs": 109209,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "ShadowBid. Private auctions. Public outcomes.",
+    "startMs": 109409,
+    "endMs": 113099,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Starting with domains. Built for private markets.",
+    "startMs": 113299,
+    "endMs": 116675,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Try the interactive demo.",
+    "startMs": 116875,
+    "endMs": 119091,
+    "timestampMs": null,
+    "confidence": null
+  }
+]

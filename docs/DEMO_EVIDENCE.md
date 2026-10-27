@@ -1,5 +1,8 @@
 # ShadowBid demo evidence
 
+**Current evidence:** [Final two-minute video](https://youtu.be/K3JkEqG3q1Y) · [Judge walkthrough](JUDGE_WALKTHROUGH.md) · [Verified invoice payment](INVOICE_PAYMENT_PROOF.md). The dated records below preserve earlier states; the October 27 invoice proof supersedes earlier unverified-payment statements. Production collection is still disabled.
+
+
 **Submission track:** Zecathon Private Markets. ShadowBid applies sealed commitments and private reveals to owner-listed domain auctions. Bidding needs an account but no wallet or cryptocurrency. The winning account later receives an access-controlled Zcash invoice; domain transfer is manual.
 
 **Live site:** [shadowbid-ashy.vercel.app](https://shadowbid-ashy.vercel.app) · **Four-minute judge sandbox:** [/try](https://shadowbid-ashy.vercel.app/try) · **Deployed baseline captured:** `13ba683` on 2026-10-25 UTC. The invoice checkpoint `f16a87f` was subsequently pushed and successfully deployed (GitHub Vercel status verified on 2026-10-26). DNS retry, navigation spacing, and the production payment release lock were subsequently approved and deployed in `4c4b551` on 2026-10-26. Live styles and disabled worker health were verified. These screenshots still show the earlier baseline.
@@ -68,3 +71,19 @@ The approved release locks worker authorization and payment instructions to expl
 Implementation commit `4c4b5510b5c2ccd519058afd9bc256b6e1a3d88a` was pushed after owner approval. [Vercel reported deployment success](https://vercel.com/sopskistars-projects/shadowbid/89uzsLrepTi7magP2uDTbF1UC3pn). A fresh before/after public comparison retained all eight auctions, deadlines, DNS timestamps, and eight commitments without changes. Production worker health is now **disabled**, with no heartbeat. `/`, `/signup`, `/try`, `/auctions`, `/login`, and `/roadmap` returned HTTP 200, and live styles contained the DNS retry panel and account-control spacing fixes.
 
 Authenticated DNS retry/navigation behavior passed the local browser suite; production account credentials were not used for this release check. The deployment creates no new payment evidence: genuine assigned-invoice settlement and paid recovery remain unproven.
+
+
+## Film evidence update (2026-10-26 17:49–18:20 UTC)
+
+Fresh anonymous capture still found eight auctions, six DNS-verified listings and eight commitments. `domscout.xyz` now has a public final winning price of **0.12 ZEC** (12,000,000 zatoshis), with no public bidder identity. Its public `completedAt` is null and the detail page shows an expired stage: this is final-price evidence, **not a completed or paid sale**. The older screenshots above predate finalization.
+
+A fresh run of the existing receiver observer decrypted the same genuine 1 TAZ faucet note and matched its dedicated receiver. Zebra tip 4,544,758 put the note in active block 4,541,930 with **2,829 confirmations**; wallet scan height was 4,544,756. This is still not an assigned-invoice payment. Production settlement remains disabled.
+
+The separate [video project](../demo-video/README.md) contains genuine anonymous production footage, actual local receipt/tamper/reveal/winner and winner-only unpaid-invoice recordings, and sanitized wallet evidence. Its [claim boundaries](../demo-video/docs/CLAIMS_EVIDENCE.md) identify local fixtures, time compression, operator trust and unpaid status. No production account, auction deadline, commitment, invoice or payment was modified for filming. The homepage wording changes remain local pending approval; the deployed baseline remains `4c4b551` with documentation commit `f56faf9`.
+
+
+## Verified invoice settlement and live judge walkthrough — October 27
+
+The [sanitized invoice proof](INVOICE_PAYMENT_PROOF.md) supersedes earlier statements that invoice-specific settlement was unverified. The single authorized 0.01 TAZ self-transfer paid A, left B unpaid, and survived fresh worker processes without duplicate notes. Actual winner checkout, unauthorized-account restrictions, and independent QR decoding passed. Production collection remains disabled.
+
+The public `/try` walkthrough passed from 09:31:07 to 09:35:13 UTC using unmodified server deadlines, two downloaded receipts, early-reveal and tamper rejection, both valid reveals, and deterministic Bidder B selection. The [verification record](JUDGE_WALKTHROUGH_VERIFICATION.json) contains no session or receipt secrets. A fresh anonymous marketplace read preserved the real domscout.xyz result (three commitments, 0.12 ZEC) and confirmed domscout.xyz, multiagentpayments.com, agenticopsai.xyz and everrelay.xyz exist. No real production auction or invoice was changed.

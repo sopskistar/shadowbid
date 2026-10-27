@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-26T17:49:14.601259+00:00",
+  "wallet_height": 4544756,
+  "zebra_tip": 4544758,
+  "chain": "public testnet",
+  "recipient_metadata": true,
+  "notes": [
+    {
+      "pool": "ironwood",
+      "txid": "183df88acced845220e0394bd90937ffc4ee4c36f518f6ee876f15f26be6d03d",
+      "output_index": 0,
+      "value_zats": 100000000,
+      "height": 4541930,
+      "confirmations": 2829,
+      "recipient_matches_dedicated_receiver": true
+    }
+  ],
+  "invoice_specific_payment_proven": false
+}

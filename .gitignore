@@ -158,3 +158,15 @@ __pycache__/
 
 # Editor swap files, which may contain private environment values
 *.swp
+
+# Local film production assets and private capture state
+/demo-video/.private/
+/demo-video/output/
+/demo-video/.cache/
+/demo-video/.venv/
+
+# Downloaded editor skills and redundant audio intermediates stay local.
+/demo-video/.agents/
+/demo-video/public/audio/master.wav
+/demo-video/public/audio/narration.wav
+/demo-video/public/audio/premaster*.wav

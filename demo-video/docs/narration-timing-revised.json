@@ -1,0 +1,178 @@
+[
+  {
+    "scene": "problem-revised",
+    "file": "audio/mix-problem-revised-0.wav",
+    "start": 0.6,
+    "duration": 3.193708,
+    "text": "A domain name can reveal your next business.",
+    "speed": 1
+  },
+  {
+    "scene": "problem-revised",
+    "file": "audio/mix-problem-revised-1.wav",
+    "start": 5.193707999999999,
+    "duration": 4.96825,
+    "text": "Public bidding can expose your budget, your strategy, and your future brand.",
+    "speed": 1
+  },
+  {
+    "scene": "question-revised",
+    "file": "audio/mix-question-revised-0.wav",
+    "start": 12.6,
+    "duration": 3.138875,
+    "text": "Your interest. Your budget. Your next move.",
+    "speed": 1
+  },
+  {
+    "scene": "question-revised",
+    "file": "audio/mix-question-revised-1.wav",
+    "start": 17.138875,
+    "duration": 2.216583,
+    "text": "What if your offer stayed yours?",
+    "speed": 1
+  },
+  {
+    "scene": "product-revised",
+    "file": "audio/mix-product-revised-0.wav",
+    "start": 23.6,
+    "duration": 3.434167,
+    "text": "ShadowBid. The private domain aftermarket.",
+    "speed": 1
+  },
+  {
+    "scene": "product-revised",
+    "file": "audio/mix-product-revised-1.wav",
+    "start": 28.434167000000002,
+    "duration": 5.519958,
+    "text": "Real seller listings. DNS control checks. Confidential sealed bids.",
+    "speed": 1
+  },
+  {
+    "scene": "bid-revised",
+    "file": "audio/mix-bid-revised-0.wav",
+    "start": 37.6,
+    "duration": 4.039917,
+    "text": "In this controlled demonstration, a bidder seals an offer.",
+    "speed": 1
+  },
+  {
+    "scene": "bid-revised",
+    "file": "audio/mix-bid-revised-1.wav",
+    "start": 42.889917000000004,
+    "duration": 5.460292,
+    "text": "The browser hashes the amount with a random secret, bound to the auction and bidder.",
+    "speed": 1
+  },
+  {
+    "scene": "bid-revised",
+    "file": "audio/mix-bid-revised-2.wav",
+    "start": 49.60020900000001,
+    "duration": 3.562042,
+    "text": "No wallet connection. No on-chain bidding fee.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal-revised",
+    "file": "audio/mix-reveal-revised-0.wav",
+    "start": 54.6,
+    "duration": 3.617458,
+    "text": "The downloaded receipt is your proof. Keep it private.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal-revised",
+    "file": "audio/mix-reveal-revised-1.wav",
+    "start": 59.617458,
+    "duration": 4.461792,
+    "text": "In the timed practice auction, a changed receipt is rejected.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal-revised",
+    "file": "audio/mix-reveal-revised-2.wav",
+    "start": 65.47925,
+    "duration": 2.51525,
+    "text": "The saved original verifies.",
+    "speed": 1
+  },
+  {
+    "scene": "reveal-revised",
+    "file": "audio/mix-reveal-revised-3.wav",
+    "start": 69.3945,
+    "duration": 2.84225,
+    "text": "These waiting periods are edited down.",
+    "speed": 1
+  },
+  {
+    "scene": "result-revised",
+    "file": "audio/mix-result-revised-0.wav",
+    "start": 76.6,
+    "duration": 2.448625,
+    "text": "The highest eligible reveal wins.",
+    "speed": 1.1259541984732824
+  },
+  {
+    "scene": "result-revised",
+    "file": "audio/mix-result-revised-1.wav",
+    "start": 79.29862499999999,
+    "duration": 6.870333,
+    "text": "Domscout dot X Y Z: three commitments. A public winning price of zero point one two Z E C.",
+    "speed": 1.1259541984732824
+  },
+  {
+    "scene": "result-revised",
+    "file": "audio/mix-result-revised-2.wav",
+    "start": 86.41895799999999,
+    "duration": 3.771292,
+    "text": "Bidder identities stay private. The operator sees reveals.",
+    "speed": 1.1259541984732824
+  },
+  {
+    "scene": "payment-revised",
+    "file": "audio/mix-payment-revised-0.wav",
+    "start": 91.6,
+    "duration": 3.768,
+    "text": "A shielded self-transfer paid Invoice A on public testnet.",
+    "speed": 1.146694214876033
+  },
+  {
+    "scene": "payment-revised",
+    "file": "audio/mix-payment-revised-1.wav",
+    "start": 95.618,
+    "duration": 4.175875,
+    "text": "Exact amount. Verified recipient. More than three confirmations.",
+    "speed": 1.146694214876033
+  },
+  {
+    "scene": "payment-revised",
+    "file": "audio/mix-payment-revised-2.wav",
+    "start": 100.043875,
+    "duration": 4.137958,
+    "text": "Invoice B stayed unpaid. Production collection stays disabled.",
+    "speed": 1.146694214876033
+  },
+  {
+    "scene": "closing-revised",
+    "file": "audio/mix-closing-revised-0.wav",
+    "start": 105.6,
+    "duration": 3.589292,
+    "text": "Domains today. Broader private markets, tomorrow.",
+    "speed": 1
+  },
+  {
+    "scene": "closing-revised",
+    "file": "audio/mix-closing-revised-1.wav",
+    "start": 109.651792,
+    "duration": 3.794583,
+    "text": "ShadowBid. Private auctions. Public outcomes.",
+    "speed": 1
+  },
+  {
+    "scene": "closing-revised",
+    "file": "audio/mix-closing-revised-2.wav",
+    "start": 113.908875,
+    "duration": 2.264833,
+    "text": "Try the interactive demo.",
+    "speed": 1
+  }
+]

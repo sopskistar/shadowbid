@@ -5,7 +5,7 @@ import {eq,and,sql} from 'drizzle-orm';
 import {verifyWorker} from '@/lib/worker-auth';
 import {z} from 'zod';
 
-const note=z.object({txid:z.string().regex(/^[a-f0-9]{64}$/),outIndex:z.number().int().nonnegative(),amountZats:z.string().regex(/^[1-9]\d*$/),confirmations:z.number().int().nonnegative()});
+const note=z.object({txid:z.string().regex(/^[a-f0-9]{64}$/),outIndex:z.number().int().min(0).max(2147483647),amountZats:z.string().max(16).regex(/^[1-9]\d*$/).refine(value=>BigInt(value)<=2100000000000000n),confirmations:z.number().int().min(0).max(2147483647)});
 const payload=z.object({id:z.uuid(),walletAccount:z.uuid(),notes:z.array(note).max(1000)});
 export async function POST(req:Request){
   const raw=await req.text();if(!await verifyWorker(req,raw))return NextResponse.json({error:'Unauthorized'},{status:401});
@@ -26,7 +26,15 @@ export async function POST(req:Request){
     }
     const records=await tx.select().from(paymentNotes).where(eq(paymentNotes.invoiceId,i.id));
     let confirmed=0n,detected=0n;
-    for(const n of records){if(!unique.has(`${n.txid}:${n.outIndex}`))continue;detected+=n.amountZats;if(n.confirmations>=3)confirmed+=n.amountZats;}
+    for(const n of records){
+      if(!unique.has(`${n.txid}:${n.outIndex}`)){
+        // Preserve the immutable note identity for replay/conflict detection,
+        // but revoke its chain credit when it disappears from the snapshot.
+        await tx.update(paymentNotes).set({confirmations:0}).where(eq(paymentNotes.id,n.id));
+        continue;
+      }
+      detected+=n.amountZats;if(n.confirmations>=3)confirmed+=n.amountZats;
+    }
     const status=confirmed>=i.amountZats?'confirmed':detected>0n?'detected':'awaiting';
     await tx.update(invoices).set({status,paidZats:confirmed}).where(eq(invoices.id,i.id));
     return {ok:true,status,confirmedZats:String(confirmed),detectedZats:String(detected)};

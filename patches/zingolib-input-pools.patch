@@ -1,0 +1,165 @@
+--- a/zingolib/src/wallet/zcb_traits.rs
++++ b/zingolib/src/wallet/zcb_traits.rs
+@@ -1058,48 +1058,6 @@
+                                     }
+                                 }
+                             }
+-
+-                            let notes = self
+-                                .select_spendable_notes_by_pool::<SaplingNote>(
+-                                    &mut remaining_value_needed,
+-                                    anchor_height,
+-                                    &exclude_sapling,
+-                                    account,
+-                                    include_potentially_spent_notes,
+-                                )?
+-                                .into_iter()
+-                                .cloned()
+-                                .collect::<Vec<_>>();
+-                            exclude_sapling.extend(notes.iter().map(OutputInterface::output_id));
+-                            selected_sapling_notes.extend(notes);
+-
+-                            let notes = self
+-                                .select_spendable_notes_by_pool::<OrchardNote>(
+-                                    &mut remaining_value_needed,
+-                                    anchor_height,
+-                                    &exclude_orchard,
+-                                    account,
+-                                    include_potentially_spent_notes,
+-                                )?
+-                                .into_iter()
+-                                .cloned()
+-                                .collect::<Vec<_>>();
+-                            exclude_orchard.extend(notes.iter().map(OutputInterface::output_id));
+-                            selected_orchard_notes.extend(notes);
+-
+-                            let notes = self
+-                                .select_spendable_notes_by_pool::<IronwoodNote>(
+-                                    &mut remaining_value_needed,
+-                                    anchor_height,
+-                                    &exclude_ironwood,
+-                                    account,
+-                                    include_potentially_spent_notes,
+-                                )?
+-                                .into_iter()
+-                                .cloned()
+-                                .collect::<Vec<_>>();
+-                            exclude_ironwood.extend(notes.iter().map(OutputInterface::output_id));
+-                            selected_ironwood_notes.extend(notes);
+                         }
+                     }
+                     (
+@@ -1109,16 +1067,14 @@
+                     )
+                 }
+                 TargetValue::AllFunds(max_spend_mode) => {
+-                    // Effects at the edge: gather the spendable candidates
+-                    // per pool (strict, guaranteed-unspent view), then let
+-                    // the pure selection decide. All pools participate
+-                    // regardless of `sources` order, matching budgeted
+-                    // selection's unconditional fallback, and
+-                    // migration-reserved notes are included: all funds
++                    // Gather spendable candidates from each
++                    // permitted pool (strict, guaranteed-unspent view), then
++                    // let the pure selection decide.
++                    // Migration-reserved notes are included: all funds
+                     // means all (the reservation biases selection, never
+                     // blocks a spend).
+-                    let sapling_candidates = self
+-                        .spendable_notes::<SaplingNote>(
++                    let sapling_candidates = if sources.contains(&ShieldedPool::Sapling) {
++                        self.spendable_notes::<SaplingNote>(
+                             anchor_height,
+                             &exclude_sapling,
+                             account,
+@@ -1126,9 +1082,12 @@
+                         )?
+                         .into_iter()
+                         .cloned()
+-                        .collect::<Vec<_>>();
+-                    let orchard_candidates = self
+-                        .spendable_notes::<OrchardNote>(
++                        .collect::<Vec<_>>()
++                    } else {
++                        Vec::new()
++                    };
++                    let orchard_candidates = if sources.contains(&ShieldedPool::Orchard) {
++                        self.spendable_notes::<OrchardNote>(
+                             anchor_height,
+                             &exclude_orchard,
+                             account,
+@@ -1136,9 +1095,12 @@
+                         )?
+                         .into_iter()
+                         .cloned()
+-                        .collect::<Vec<_>>();
+-                    let ironwood_candidates = self
+-                        .spendable_notes::<IronwoodNote>(
++                        .collect::<Vec<_>>()
++                    } else {
++                        Vec::new()
++                    };
++                    let ironwood_candidates = if sources.contains(&ShieldedPool::Ironwood) {
++                        self.spendable_notes::<IronwoodNote>(
+                             anchor_height,
+                             &exclude_ironwood,
+                             account,
+@@ -1146,7 +1108,10 @@
+                         )?
+                         .into_iter()
+                         .cloned()
+-                        .collect::<Vec<_>>();
++                        .collect::<Vec<_>>()
++                    } else {
++                        Vec::new()
++                    };
+                     all_funds_selection(
+                         max_spend_mode,
+                         sapling_candidates,
+@@ -1476,6 +1441,46 @@
+         )
+     }
+ 
++    #[test]
++    fn restricted_sources_never_select_another_pool() -> Result<(), WalletError> {
++        const TARGET_HEIGHT: u32 = 21;
++        const REQUESTED_VALUE: Zatoshis = Zatoshis::const_from_u64(1_000_000);
++        let wallet = funded_wallet();
++        for source in [
++            ShieldedPool::Sapling,
++            ShieldedPool::Orchard,
++            ShieldedPool::Ironwood,
++        ] {
++            for target in [
++                TargetValue::AtLeast(REQUESTED_VALUE),
++                TargetValue::AllFunds(MaxSpendMode::MaxSpendable),
++            ] {
++                let selected = wallet.select_spendable_notes(
++                    zip32::AccountId::ZERO,
++                    target,
++                    &[source],
++                    TargetHeight::from(TARGET_HEIGHT),
++                    ConfirmationsPolicy::new_symmetrical(NonZeroU32::MIN, false),
++                    &[],
++                    LockFilter::Unfiltered,
++                )?;
++                assert_eq!(
++                    !selected.sapling().is_empty(),
++                    source == ShieldedPool::Sapling
++                );
++                assert_eq!(
++                    !selected.orchard().is_empty(),
++                    source == ShieldedPool::Orchard
++                );
++                assert_eq!(
++                    !selected.ironwood().is_empty(),
++                    source == ShieldedPool::Ironwood
++                );
++            }
++        }
++        Ok(())
++    }
++
+     /// A funded wallet whose sapling shard tree holds no checkpoint.
+     fn wallet_without_sapling_checkpoint() -> LightWallet {
+         use pepper_sync::sync::SHARDTREE_CHECKPOINT_ROLLING_WINDOW_SIZE;

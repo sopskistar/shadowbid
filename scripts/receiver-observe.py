@@ -22,8 +22,8 @@ CONTAINER = "shadowbid-nu7-receiver-scan"
 RECEIVER = "utest1hfkt0vcaz6lpkv6u8p8xqzjv69ns68eywmv0d54zlsqjc6qt9ffrp44tjj3kfaz6x7t8u6ddcwvufuukhw640y6djf7x7xj64chnldan"
 
 
-def docker(*args, timeout=45):
-    return subprocess.check_output(["docker", *args], timeout=timeout, stderr=subprocess.DEVNULL)
+def docker(*args, timeout=45, input=None):
+    return subprocess.check_output(["docker", *args], input=input, timeout=timeout, stderr=subprocess.DEVNULL)
 
 
 def rpc(method, params=None):
@@ -40,7 +40,7 @@ def rpc(method, params=None):
     return result["result"]
 
 
-def wallet_command(image, *command, wallet_directory=None):
+def wallet_args(image, wallet_directory=None, interactive=False):
     adapter = os.environ.get("SHADOWBID_ZINGO_INVOICE_CLI")
     adapter_mount = []
     executable = "/src/target/release/zingo-cli"
@@ -50,28 +50,56 @@ def wallet_command(image, *command, wallet_directory=None):
             raise RuntimeError("Invoice CLI adapter is not a regular file")
         adapter_mount = ["--mount", f"type=bind,src={adapter_path},dst=/invoice-zingo-cli,readonly"]
         executable = "/invoice-zingo-cli"
-    raw = docker(
-        "run", "--rm", "--network", "none", "--user", "1000:1000", "--read-only", "--cap-drop", "ALL",
+    return [
+        "run", "--rm", *(["-i"] if interactive else []), "--network", "none", "--user", "1000:1000", "--read-only", "--cap-drop", "ALL",
         "--mount", f"type=bind,src={wallet_directory or WALLET},dst=/wallet", *adapter_mount, "--entrypoint", "sh",
         image, "-c", f'umask 077; exec {executable} "$@"', "zingo-cli",
-        "--chain", "testnet", "--data-dir", "/wallet", "--offline", "--nosync", *command, timeout=45,
-    )
+        "--chain", "testnet", "--data-dir", "/wallet", "--offline", "--nosync",
+    ]
+
+
+def wallet_command(image, *command, wallet_directory=None):
+    raw = docker(*wallet_args(image, wallet_directory), *command)
     return json.loads(raw)
 
 
+def decode_snapshot(raw):
+    remaining = raw.decode().strip()
+    decoder = json.JSONDecoder()
+    values = []
+    for _ in range(3):
+        value, end = decoder.raw_decode(remaining)
+        values.append(value)
+        remaining = remaining[end:].strip()
+    if remaining != "Zingo CLI quit successfully.":
+        raise ValueError("Wallet snapshot did not finish cleanly")
+    if not isinstance(values[0], dict) or not isinstance(values[1], list) or not isinstance(values[2], dict):
+        raise ValueError("Wallet snapshot response types differ")
+    return values
+
+
 def scan_snapshot(image, wallet_directory=None):
-    height = int(wallet_command(image, "height", wallet_directory=wallet_directory)["height"])
-    addresses = wallet_command(image, "addresses", wallet_directory=wallet_directory)
+    # Load the immutable wallet copy once so startup overhead cannot repeatedly
+    # age the snapshot or consume the worker's heartbeat interval.
+    raw = docker(*wallet_args(image, wallet_directory, interactive=True),
+                 input=b"height\naddresses\nnotes all\nquit\n")
+    height_result, addresses, note_groups = decode_snapshot(raw)
+    height = int(height_result["height"])
     known_addresses = {entry["encoded_address"] for entry in addresses}
     if RECEIVER not in known_addresses:
         raise RuntimeError("Existing receiver is absent from wallet addresses")
     # Include spent notes: a later spend must not erase a received invoice payment.
-    note_groups = wallet_command(image, "notes", "all", wallet_directory=wallet_directory)
     notes = []
     for pool in ("ironwood", "orchard", "sapling"):
         for item in note_groups[f"{pool}_notes"]["note_summaries"]:
             status = str(item["status"])
+            # Local signing decrypts self-transfer outputs before transmission.
+            # These are not received payments and must never reach the worker.
+            if re.fullmatch(r"(?:calculated|failed) at block height \d+", status, re.IGNORECASE):
+                continue
             match = re.fullmatch(r"confirmed at block height (\d+)", status, re.IGNORECASE)
+            if not match and not re.fullmatch(r"(?:mempool|transmitted) at block height \d+", status, re.IGNORECASE):
+                raise ValueError("Unknown wallet note confirmation status")
             if os.environ.get("SHADOWBID_ZINGO_INVOICE_CLI") and "recipient_unified_address" not in item:
                 raise RuntimeError("Invoice CLI adapter omitted note recipient metadata")
             recipient = item.get("recipient_unified_address")

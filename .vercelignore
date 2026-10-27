@@ -1,0 +1,6 @@
+# Local filmmaking source, captures, model cache and rendered deliverables.
+demo-video/
+.env*
+!.env.example
+test-results/
+playwright-report/

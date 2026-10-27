@@ -4,6 +4,13 @@ import {createHash,createDecipheriv,randomBytes} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {chromium,expect} from '@playwright/test';
 import postgres from 'postgres';
+import {createRequire} from 'node:module';
+
+const require=createRequire(import.meta.url);
+// Optional independent decoder installed outside the application. No receiver
+// address or decoded payment URI is written to stdout or a public artifact.
+const decodeQR=process.env.SHADOWBID_QR_DECODER?require(process.env.SHADOWBID_QR_DECODER):null;
+const {PNG}=require('pngjs');
 
 const root=new URL('../.env.invoice-experiment/',import.meta.url);
 const configPath=new URL('worker.json',root);
@@ -21,7 +28,13 @@ const sql=postgres(config.database_url,{max:1});
 let browser;
 let checkpoint='initialization';
 try{
-  const health=await (await fetch(config.app_url+'/api/worker/health')).json();
+  let health;
+  const readyDeadline=Date.now()+120000;
+  do{
+    health=await (await fetch(config.app_url+'/api/worker/health')).json();
+    if(health.chainCrossChecked)break;
+    await new Promise(resolve=>setTimeout(resolve,1000));
+  }while(Date.now()<readyDeadline);
   assert.equal(health.chainCrossChecked,true);
   browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE});
   const owner=await browser.newContext({baseURL:config.app_url,permissions:['clipboard-read','clipboard-write']});
@@ -42,6 +55,7 @@ try{
     assert.equal((await page.goto(path)).status(),200);
     checkpoint='winner domain';
     await expect(page.getByRole('heading',{name:f.domain,exact:true})).toBeVisible();
+    if(invoice.status!=='confirmed'){
     checkpoint='winner receiver visibility';
     await expect(page.getByText(invoice.address,{exact:true})).toBeVisible();
     const amount=f.amount_zats==='1000000'?'0.01':'0.02';
@@ -50,6 +64,12 @@ try{
     await expect(page.getByRole('link',{name:'Open compatible wallet'})).toHaveAttribute('href',uri);
     const qr=page.getByRole('img',{name:'ZIP-321 payment QR code'});
     await expect(qr).toBeVisible();await expect(qr).toHaveAttribute('src',/^data:image\/png;base64,/);
+    if(decodeQR){
+      checkpoint='independent QR decoding';
+      const png=PNG.sync.read(Buffer.from((await qr.getAttribute('src')).split(',')[1],'base64'));
+      const decoded=decodeQR(new Uint8ClampedArray(png.data),png.width,png.height);
+      assert.equal(decoded?.data,uri);
+    }
     checkpoint='amount clipboard';
     await page.getByRole('button',{name:'Copy amount',exact:true}).click();
     assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),amount);
@@ -59,6 +79,23 @@ try{
     checkpoint='payment link clipboard';
     await page.getByRole('button',{name:'Copy payment link',exact:true}).click();
     assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),uri);
+    }else{
+      await expect(page.getByText('PAID',{exact:true})).toBeVisible();
+      await expect(page.getByLabel('Observed payment confirmations')).toContainText('3/3 confirmations');
+      await expect(page.getByText('Payment confirmed. Do not send additional funds.')).toBeVisible();
+      await expect(page.getByRole('link',{name:'Open compatible wallet'})).toHaveCount(0);
+      await expect(page.getByRole('img',{name:'ZIP-321 payment QR code'})).toHaveCount(0);
+      assert.equal((await owner.request.get(`/api/checkout/${token}/receipt`)).status(),200);
+      checkpoint='manual and visible-page automatic payment refresh';
+      const refreshed=response=>new URL(response.url()).pathname===path&&response.request().headers()['rsc']==='1';
+      await Promise.all([page.waitForResponse(refreshed),page.getByRole('button',{name:'Refresh payment status'}).click()]);
+      await page.waitForResponse(refreshed,{timeout:20000});
+      await expect(page.getByText('PAID',{exact:true})).toBeVisible();
+      if(process.env.SHADOWBID_CAPTURE_PAID_CHECKOUT){
+        // Capture only the rendered invoice, excluding navigation and URL/token.
+        await page.locator('.grid2').screenshot({path:process.env.SHADOWBID_CAPTURE_PAID_CHECKOUT});
+      }
+    }
     await expect(page.getByRole('button',{name:/mark.*paid/i})).toHaveCount(0);
     checkpoint='unpaid receipt and transfer denial';
     if(invoice.status!=='confirmed'){
@@ -93,6 +130,7 @@ try{
   await page.reload();await expect(page.getByRole('link',{name:'Sign In',exact:true}).first()).toBeVisible();
   assert.equal((await owner.request.get('/dashboard',{maxRedirects:0})).status(),307);
   console.log('PASS: distinct real wallet receivers, winner-only instructions, ZIP-321 QR, exact clipboard values, account refresh and sign-out. No invoice payment was simulated.');
+  console.log(decodeQR?'Independent QR decoding matched the exact payment URI.':'QR image presence checked; independent decoding was not requested.');
 }catch{
   console.error(`Local receiver checkout verification failed at ${checkpoint}; private details withheld.`);
   process.exitCode=1;

@@ -1,0 +1,24 @@
+# Isolated loopback experiment; NOT a production-payment activation service.
+[Unit]
+Description=ShadowBid isolated invoice verification app
+Requires=docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+User=shadowbid
+Group=shadowbid
+WorkingDirectory=/srv/shadowbid
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 /srv/shadowbid/scripts/run-invoice-experiment.py serve
+Restart=on-failure
+RestartSec=10
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/shadowbid/.next
+
+[Install]
+WantedBy=multi-user.target

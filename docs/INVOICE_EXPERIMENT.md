@@ -1,5 +1,7 @@
 # Isolated invoice experiment — 2026-10-26
 
+> Superseded payment status: the October 27 continuation completed the single authorized self-transfer and verified Invoice A Paid, Invoice B Unpaid, and worker restart. See [current invoice proof](INVOICE_PAYMENT_PROOF.md). The earlier unpaid/pending statements below are historical. Production collection remains disabled.
+
 **Invoice-specific public-testnet settlement is not verified. Keep the production payment worker disabled.** The two persistent local invoices have real wallet-derived receivers, but neither has a matched payment. Synthetic payment tests do not change that conclusion.
 
 ## State inherited from the previous session
@@ -93,3 +95,42 @@ scripts/run-invoice-experiment.py
 tests/e2e/payment-policy.spec.ts
 tests/test_receiver_monitor.py
 ```
+
+## Latest continuation — 2026-10-27 UTC
+
+The video was recovered and validated before resuming this experiment. The two original invoices remain unexpired until October 29 around 09:00 UTC; their deadlines were not extended. They still have zero confirmed zatoshis and zero matched notes. No transaction or faucet request was sent.
+
+The local scanner initially could not connect to its configured lightwallet service. Docker bridge DNS failed using both the configured public resolver and the WSL resolver, while host-network containers resolved the upstream successfully. The scanner was restarted with its same pinned image, sync-only command, user, and wallet mount on the host network. The original stopped container and its inspect record are preserved for rollback; no wallet, volume, key, or invoice binding was replaced. This CLI starts no management RPC or payment server. It is still a laptop-hosted scanner, not an external production deployment.
+
+After recovery, a fresh observation at 2026-10-27 01:12:18 UTC matched the same genuine 1 TAZ note to its original receiver: wallet height 4,545,823; Zebra tip 4,545,824; note block 4,541,930; 3,895 confirmations. Neither invoice matched that recipient. A later authenticated reconciliation at 01:18:50 UTC left both invoices awaiting, with zero detected/confirmed zatoshis.
+
+### Implemented completion checks
+
+- Reorg reconciliation now resets confirmation credit on absent notes while preserving their immutable identities for duplicate/conflict detection. Payment receipts exclude notes below three confirmations, so replacement-chain payments cannot leave orphaned notes in a paid receipt.
+- Observation payloads reject out-of-range database integers and amounts above the Zcash supply bound.
+- Paid checkout hides the address, payment link and QR, preventing an invitation to pay twice. Expired unpaid invoices remain locked. Existing pre-expiry notes may acquire confirmations later, but newly detected late notes cannot pay or top up an expired invoice; those require manual review. The private observation log retains the wallet evidence.
+- `scripts/check-invoice-settlement.py` performs a fresh wallet reconciliation in a new worker process, checks invoice A's exact 1,000,000-zatoshi payment and three confirmations against persistent database notes, requires B to remain unpaid, then repeats in another worker process and checks that note identities/counts are unchanged. It writes a private acceptance report only after success. It sends no funds and changes no deadlines or receivers.
+
+```bash
+# With the isolated app running, and no concurrent observer holding its lock:
+python3 scripts/check-invoice-settlement.py
+# Keep genuine observations fresh during the separate authorization/UI check:
+python3 scripts/run-invoice-experiment.py watch
+PLAYWRIGHT_CHROMIUM_EXECUTABLE=/path/to/chrome python3 scripts/run-invoice-experiment.py checkout
+```
+
+The acceptance command was attempted against the real experiment and correctly returned **NOT VERIFIED** because invoice A is unpaid. No paid acceptance report was produced. Its Python regressions use explicitly synthetic fixtures and do not count as network evidence. Before rerunning after an authorized payment, stop the separate `watch` process so the acceptance runner can acquire the wallet worker lock.
+
+The pinned adapter patch also passed seven upstream Rust wallet-summary tests in a disposable container with no wallet or chain mounts. The first offline attempt lacked `bit-set`/`bit-vec` test dependencies; bridge-network downloads failed DNS. The host-network retry downloaded the locked dependencies and passed. This validates compilation and summary regressions, not a paid invoice.
+
+### External hosting decision
+
+Use a dedicated always-on Linux VM with Docker/systemd and an encrypted persistent disk, separate from Vercel. Keep Zebra's management RPC on loopback, expose only necessary peer networking, and run the receiving CLI without a public listener. Provision backups and health alerts; preserve the pinned wallet format and the private mapping directory together. An operator-managed host network is acceptable for this sync-only CLI, but is not permission to expose management RPC.
+
+The existing code deliberately accepts only a loopback app/database experiment. Connecting an external worker to the production app therefore also requires a separately reviewed release-policy/authentication change, outbound HTTPS configuration, and genuine paid recovery evidence. No VM was purchased, no remote deployment was performed, and production checkout must remain disabled.
+
+### Actual checkout validation
+
+Both preserved invoice checkouts passed again with genuine monitoring active: the winner saw the correct distinct receiver and exact amount; seller/stranger access restrictions, receipt denial while unpaid, clipboard values, reload and sign-out passed. An independent `jsqr` 1.4.0 decoder read each generated PNG and matched its full ZIP-321 URI exactly. The decoder was installed only in `/tmp/shadowbid-qr-validation`; application dependencies were unchanged. To repeat independent decoding, set `SHADOWBID_QR_DECODER` to that package’s `dist/jsQR.js` when running the checkout script. Without it the script explicitly reports image-presence validation only.
+
+The latest sampled observation at 01:24:51 UTC had wallet and Zebra both at 4,545,850 and zero matching zatoshis for either invoice. The temporary local app/observer were stopped after validation; the recovered wallet scanner continues. Production payments remain disabled. Starting the app alone does not make checkout payable: a fresh successful observer heartbeat is still required.
