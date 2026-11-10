@@ -4,6 +4,14 @@
 
 Built for **Zecathon 2026 · Private Markets**. Invoice-specific shielded settlement is verified on public testnet in a controlled local experiment. **Production payment collection is disabled.**
 
+## The problem: bidding reveals more than a price
+
+A domain buyer may be evaluating a product launch, a brand name, or a strategic acquisition. In an open bidding process, each visible offer can expose **how interested that buyer is** and invite competitors to react. Sellers still need a defensible winner and a clear path to settlement; buyers need to know their offers were not changed after the bidding deadline.
+
+We built ShadowBid around a narrower question: **can a seller run a useful domain auction without making each buyer's offer public while the auction is open?** A browser-created sealed commitment fixes the offer before reveal; a private receipt lets the bidder prove it later. The server verifies valid reveals and determines the outcome under published rules.
+
+This is not anonymous, trustless auction infrastructure: the operator sees valid reveals, domain transfer remains manual, and production settlement is not enabled.
+
 ## Judge? Start Here
 
 | Explore | Link |
@@ -14,6 +22,15 @@ Built for **Zecathon 2026 · Private Markets**. Invoice-specific shielded settle
 | Genuine Zcash evidence | [Verified invoice payment](docs/INVOICE_PAYMENT_PROOF.md) |
 | Real finalized auction | [domscout.xyz — 0.12 ZEC final price](https://shadowbid-ashy.vercel.app/auctions/3def1e14-06e7-41a1-8d25-ebf4d3133b76) |
 | Two-minute demo video | [Watch the final 117-second demo on YouTube](https://youtu.be/K3JkEqG3q1Y) |
+
+## What makes ShadowBid distinct
+
+- **Sealed during bidding, verifiable at reveal.** The browser creates a SHA-256 commitment and keeps the secret in a downloadable receipt; changing the receipt fails verification.
+- **A concrete, judge-testable market.** The four-minute sandbox exercises real deadlines and the same commitment/reveal rules without requesting payment or a wallet.
+- **Privacy boundaries are explicit.** Other bidders do not see losing offers or account identities, but the trusted operator can access revealed bids; the final winning price is public.
+- **Zcash settlement is evidence-backed, not implied.** An isolated public-testnet invoice experiment demonstrates shielded recipient attribution and payment isolation. It is separate from the finalized domain auction and does **not** prove a completed domain purchase.
+
+The design focuses on **confidential price discovery with an inspectable outcome**, not a claim that domain marketplaces or sealed-bid auctions did not previously exist.
 
 ## Verify ShadowBid in Four Minutes
 
