@@ -1,149 +1,135 @@
 # ShadowBid
 
-**Private auctions. Public outcomes.** A public domain bid can reveal your budget, competitive interest and next business move. ShadowBid lets sellers list real domains and buyers submit confidential sealed bids, with a public winning price and a private winner invoice.
+**Private auctions. Public outcomes.**
 
-Built for **Zecathon 2026 · Private Markets**. Invoice-specific shielded settlement is verified on public testnet in a controlled local experiment. **Production payment collection is disabled.**
+A domain name can reveal a startup's next product, a company's expansion, or an acquisition strategy. Public bidding can expose the buyer's interest and budget before a deal is made.
 
-## The problem: bidding reveals more than a price
+**ShadowBid lets domain owners accept sealed bids, verify the reveals after bidding closes, and publish the winning price without exposing every offer to other bidders.** The winning bidder gets private checkout instructions, with shielded Zcash receiving demonstrated separately on public testnet.
 
-A domain buyer may be evaluating a product launch, a brand name, or a strategic acquisition. In an open bidding process, each visible offer can expose **how interested that buyer is** and invite competitors to react. Sellers still need a defensible winner and a clear path to settlement; buyers need to know their offers were not changed after the bidding deadline.
+Built for **Zecathon 2026 — Private Markets**.
 
-We built ShadowBid around a narrower question: **can a seller run a useful domain auction without making each buyer's offer public while the auction is open?** A browser-created sealed commitment fixes the offer before reveal; a private receipt lets the bidder prove it later. The server verifies valid reveals and determines the outcome under published rules.
+**[Live marketplace](https://shadowbid-ashy.vercel.app)** · **[Try a private auction](https://shadowbid-ashy.vercel.app/try)** · [117-second demo](https://youtu.be/K3JkEqG3q1Y) · [Judge walkthrough](docs/JUDGE_WALKTHROUGH.md) · [Zcash payment proof](docs/INVOICE_PAYMENT_PROOF.md)
 
-This is not anonymous, trustless auction infrastructure: the operator sees valid reveals, domain transfer remains manual, and production settlement is not enabled.
+[![Watch the ShadowBid demo](demo-video/public/captures/production-detail.png)](https://youtu.be/K3JkEqG3q1Y)
 
-## Judge? Start Here
+## Why ShadowBid
 
-| Explore | Link |
+Imagine trying to acquire a domain for a product you have not announced. An open bidding war tells competing buyers what you want and how far you may be willing to go. A conventional private negotiation conceals the offer but gives other bidders little assurance that their bids were fixed before the deadline.
+
+ShadowBid separates the two moments:
+
+- **Commit:** A bidder seals a hidden offer in their browser. The server receives a SHA-256 commitment, not a publicly displayed bid amount.
+- **Reveal:** After bidding closes, the bidder uploads the secret receipt. The server checks that the revealed offer matches the earlier commitment.
+- **Finalize:** The highest eligible revealed offer wins, using deterministic tie-break rules. The winning price becomes public; other bidders' identities and losing offers are not published.
+- **Settle:** Winner-only invoice details can use a distinct Zcash shielded receiver. Payment attribution has been proven in a controlled public-testnet experiment; live Production collection remains disabled.
+
+**The core idea:** Buyers can commit to an offer without announcing it to competitors, while sellers can close an auction under published reveal and winner-selection rules.
+
+## Judge it yourself in four minutes
+
+The [practice auction](https://shadowbid-ashy.vercel.app/try) uses actual commitment verification and server-enforced deadlines. **No sign-up, wallet, funds, or payable invoice is required.**
+
+1. **Start the practice auction.** The exercise uses a reserved domain, not a real domain for sale.
+2. **Seal two bids.** Keep Bidder A at **0.02 practice ZEC** and Bidder B at **0.03 practice ZEC**. Download both private JSON receipts.
+3. **Wait for the reveal phase.** The server enforces two-minute bidding and two-minute reveal windows.
+4. **Try tampering.** Modify the `amountZats` value in a *copy* of A's receipt. The altered receipt is rejected because it no longer matches the commitment.
+5. **Reveal the originals.** Upload the unchanged A and B receipts, then observe **Bidder B win at 0.03 practice ZEC**.
+
+Keep the original receipts private and test the altered copy **before** revealing A's valid receipt. [Exact steps and troubleshooting](docs/JUDGE_WALKTHROUGH.md).
+
+## What has been demonstrated
+
+| Demonstration | Result | Verify |
+| --- | --- | --- |
+| **Real domain auction** | `domscout.xyz`: three sealed commitments, verified eligible reveals and a published **0.12 ZEC winning price** | [Finalized auction](https://shadowbid-ashy.vercel.app/auctions/3def1e14-06e7-41a1-8d25-ebf4d3133b76) |
+| **Tamper-resistant practice** | Two downloaded receipts, altered receipt rejected, valid reveals accepted, correct winner selected under server deadlines | [Judge walkthrough and recorded run](docs/JUDGE_WALKTHROUGH.md) |
+| **Shielded Zcash invoice payment** | Invoice A received exactly **0.01 TAZ** on public testnet; Invoice B remained unpaid. Recipient attribution, confirmations and repeat-scan protection were verified | [Payment evidence](docs/INVOICE_PAYMENT_PROOF.md) |
+| **Engineering validation** | **33 Vitest**, **29 Python**, **18 Playwright** and **13 Rust** tests passed in the recorded release review, alongside lint, TypeScript and build checks | [Release validation](docs/RELEASE_VALIDATION.md) |
+
+The domain auction and payment test are **separate demonstrations**. The testnet payment was a wallet-controlled self-transfer, not a buyer's payment for `domscout.xyz`; no completed domain transfer is claimed.
+
+## Why Zcash
+
+A sealed auction and a shielded payment solve different privacy problems.
+
+**Commit–reveal protects offers during bidding.** Each browser-generated commitment binds an offer before the reveal deadline; an altered receipt fails verification. The server verifies reveals and determines the winner, while losing offers and bidder identities remain hidden from other participants.
+
+**Zcash protects the settlement details onchain.** A winner-specific shielded receiver lets the wallet attribute an incoming note to the correct private invoice without revealing the shielded recipient and amount to ordinary public chain observers.
+
+The controlled public-testnet experiment confirmed:
+
+- **0.01 TAZ / 1,000,000 zatoshis** received for Invoice A, confirmed against the active Zebra chain.
+- **Invoice A: Paid; Invoice B: Unpaid**, despite distinct receivers in the same experiment.
+- Matching decrypted receiver, stored payment evidence and no double credit after worker restart.
+- A recorded ten-confirmation acceptance, followed by a later **584-confirmation** active-chain recheck.
+
+**[View the exact transaction and wallet-observation proof](docs/INVOICE_PAYMENT_PROOF.md)** · [Sanitized machine-readable evidence](docs/INVOICE_PAYMENT_PROOF.json) · [Later recheck](docs/INVOICE_PAYMENT_RECHECK.json)
+
+The public transaction ID alone does not disclose the shielded amount or recipient. Those values were established by wallet-decrypted observations and verified receiver binding.
+
+## Built features
+
+| Area | Implementation |
 | --- | --- |
-| Live marketplace | [Browse ShadowBid](https://shadowbid-ashy.vercel.app) |
-| Four-minute interactive auction | [Try a Private Auction — no account or funds needed](https://shadowbid-ashy.vercel.app/try) |
-| Detailed instructions | [Judge walkthrough](docs/JUDGE_WALKTHROUGH.md) |
-| Genuine Zcash evidence | [Verified invoice payment](docs/INVOICE_PAYMENT_PROOF.md) |
-| Real finalized auction | [domscout.xyz — 0.12 ZEC final price](https://shadowbid-ashy.vercel.app/auctions/3def1e14-06e7-41a1-8d25-ebf4d3133b76) |
-| Two-minute demo video | [Watch the final 117-second demo on YouTube](https://youtu.be/K3JkEqG3q1Y) |
+| **Domain marketplace** | Seller-created auctions, browsing, filters, watchlist and separate illustrative Demo Market |
+| **Seller controls** | Domain ownership attestation through DNS TXT verification; staged CSV imports |
+| **Private bidding** | SHA-256 commitments, downloadable secret receipts and server-enforced phase deadlines |
+| **Deterministic results** | Reveal verification, highest eligible bid and defined tie-break rules |
+| **Private checkout** | Winner-only invoice details and restricted seller settlement information |
+| **Zcash receiving adapter** | Wallet-controlled shielded receiver attribution, Zebra chain checks and authenticated observation worker, tested locally and on public testnet |
 
-## What makes ShadowBid distinct
-
-- **Sealed during bidding, verifiable at reveal.** The browser creates a SHA-256 commitment and keeps the secret in a downloadable receipt; changing the receipt fails verification.
-- **A concrete, judge-testable market.** The four-minute sandbox exercises real deadlines and the same commitment/reveal rules without requesting payment or a wallet.
-- **Privacy boundaries are explicit.** Other bidders do not see losing offers or account identities, but the trusted operator can access revealed bids; the final winning price is public.
-- **Zcash settlement is evidence-backed, not implied.** An isolated public-testnet invoice experiment demonstrates shielded recipient attribution and payment isolation. It is separate from the finalized domain auction and does **not** prove a completed domain purchase.
-
-The design focuses on **confidential price discovery with an inspectable outcome**, not a claim that domain marketplaces or sealed-bid auctions did not previously exist.
-
-## Verify ShadowBid in Four Minutes
-
-Allow two minutes to commit and two minutes to reveal, plus interaction time. Keep this browser tab open and both downloaded receipts private.
-
-1. Open the [judge sandbox](https://shadowbid-ashy.vercel.app/try).
-2. Press **Start practice auction →**. The reserved practice domain is not for sale.
-3. Under **BIDDER A**, keep the default **0.02** offer and press **Seal bid & download receipt**. The browser submits a SHA-256 commitment.
-4. Save `shadowbid-practice-A-receipt.json` — it contains the secret needed to reveal.
-5. Under **BIDDER B**, keep **0.03** and press **Seal bid & download receipt**.
-6. Save `shadowbid-practice-B-receipt.json` separately.
-7. Wait until the real server-enforced reveal phase shows **Import saved receipt**.
-8. Check tamper rejection: copy A's receipt, change only `amountZats`, and upload the altered copy under **BIDDER A**. Expect **Receipt does not match the original sealed commitment.**
-9. Upload the unchanged originals using **Import Bidder A receipt** and **Import Bidder B receipt**. Each panel shows **Reveal verified**. Test the altered copy first because an accepted reveal removes that role's upload control.
-10. At the reveal deadline, observe **Bidder B wins** and **0.03 practice ZEC**. The highest eligible reveal wins; equal offers use commitment time, then bid ID.
-
-This sandbox uses the real commitment/reveal rules and server deadlines. It creates **no payable invoice, address, QR code or payment request**. You control both practice roles on one device; real auctions separate authenticated accounts. [Full walkthrough and troubleshooting](docs/JUDGE_WALKTHROUGH.md).
-
-## Real Auction. Real Payment Evidence.
-
-These are **two separate demonstrations**, not one completed domain sale.
-
-| Evidence | What it establishes |
-| --- | --- |
-| [domscout.xyz auction](https://shadowbid-ashy.vercel.app/auctions/3def1e14-06e7-41a1-8d25-ebf4d3133b76) | Three sealed commitments; finalization from verified eligible reveals; public **0.12 ZEC** winning price. Bidder identities and losing offers are hidden from other participants. Winner payment details require the winning account; the seller has a restricted settlement view. **No paid sale or completed domain transfer is claimed.** |
-| [Public-testnet invoice experiment](docs/INVOICE_PAYMENT_PROOF.md) | Exact shielded **0.01 TAZ / 1,000,000 zatoshis**, wallet-decrypted recipient attribution, genuine confirmations, **Invoice A Paid / Invoice B Unpaid**, persisted payment and replay protection. A **wallet-controlled self-transfer**, not an independent buyer purchase or payment for domscout.xyz. |
-
-Transaction: `8cbffc50de4acdf7d9705a940c5cb8adad932715f96f275e0300e96f3e5a5206`.
-
-The original online acceptance recorded ten confirmations; a later active-chain recheck recorded 584. [Sanitized auction screenshot](demo-video/public/captures/production-detail.png) · [Payment proof JSON](docs/INVOICE_PAYMENT_PROOF.json) · [Later recheck](docs/INVOICE_PAYMENT_RECHECK.json).
-
-**Production wallet monitoring is not externally hosted or enabled.** Recorded payment proof is distinct from current scanner availability. No mainnet settlement is claimed. [Release validation](docs/RELEASE_VALIDATION.md).
-
-## Privacy and Trust Model
-
-| Boundary | What judges should know |
-| --- | --- |
-| Public | Domain listings, commitment hashes, deadlines and the final winning price. |
-| Private from other bidders | Account identities, sealed offer amounts and winner invoice details. Losing offers are not published. |
-| Buyer and seller access | Each bidder keeps their own secret receipt. The winner has account-protected checkout and payment records; the seller has a restricted settlement view. Other bidders cannot access either party's private invoice details. |
-| Trusted operator | Can access accounts and valid revealed bids; runs winner selection, the database and wallet observations. The server receives the amount and secret at reveal. |
-| Zcash protection | Shielded recipient and amount are hidden from public chain observers. The recipient wallet can decrypt them; network metadata is not eliminated. The test voluntarily discloses its amount/receiver as evidence. |
-| Not implemented or demonstrated | Trustless escrow, automatic registrar transfer, independently verifiable winner selection and mainnet settlement. Domain delivery is manual. |
-
-## For Technical Judges
-
-These commands exist in this repository. Unit tests use synthetic fixtures; the recorded public-testnet evidence is a separate real experiment.
-
-```bash
-npm ci
-# SHA-256 binding, altered receipt rejection, deterministic winner/tie-break:
-npm test -- tests/crypto.test.ts tests/judge-rules.test.ts
-# Production payment lock and authenticated worker policy:
-npm test -- tests/payment-worker-policy.test.ts
-# Recipient attribution, duplicate/isolation, stale/reorg and restart acceptance:
-python3 -m unittest discover -s tests -p 'test_receiver_monitor.py' -v
-```
-
-With the [documented disposable loopback database/app](docs/TESTING.md) running, test private invoice access, HMAC replay, payment-note reconciliation and reorg recovery:
-
-```bash
-E2E_ISOLATED_DB=true npm run test:e2e -- tests/e2e/protocol.spec.ts tests/e2e/payment-policy.spec.ts tests/e2e/judge.spec.ts --workers=1
-```
-
-The browser suite accelerates deadlines only in its disposable database; the live `/try` flow uses real two-minute windows. A preserved, healthy wallet host can run `python3 scripts/check-invoice-settlement.py` for genuine recipient attribution and fresh-worker payment persistence. That command needs protected operator configuration, is not a public-clone demo, and sends no funds. **Do not rerun the sender or prover.**
-
-[Full test instructions](docs/TESTING.md) · [Architecture](docs/ARCHITECTURE.md) · [Owner submission packet](docs/ZECATHON_SUBMISSION.md)
+The [Demo Market](https://shadowbid-ashy.vercel.app) is illustrative; its preview names are not live seller auctions.
 
 ## Architecture
 
-The Next.js application serves seller listings, DNS TXT verification, authenticated bidders, and winner-only checkout. The browser creates a SHA-256 commitment and a private JSON reveal receipt. PostgreSQL stores commitments, server-verified reveals, deterministic outcomes, private invoices, payment notes, and worker replay nonces. Public APIs expose the final winning price without bidder identities or losing bids. The operator is trusted and sees reveals.
+```mermaid
+flowchart LR
+  S[Verified seller domain] --> A[Auction and deadlines]
+  B[Bidder browser] --> C[SHA-256 commitment]
+  C --> A
+  B --> R[Private receipt]
+  R --> V[Reveal and verification]
+  A --> V
+  V --> W[Winner and public final price]
+  W --> I[Winner-only private invoice]
+  I -. controlled testnet proof .-> Z[Shielded Zcash receiver]
+  Z --> O[Wallet observation + Zebra checks]
+  O --> P[Invoice payment status]
+```
 
-A separate receiving worker keeps wallet material outside Vercel. Zallet receiving has passed a local regtest test. The pinned NU7-compatible Zingolib experiment decrypts public-testnet notes, resolves each recipient against wallet-controlled Unified receivers, cross-checks the active chain through Zebra, and authenticates observations to the app with HMAC. Two distinct local invoice receivers were tested: A received exactly 0.01 TAZ, B received nothing, and paid recovery passed. The production release lock remains closed. See [architecture](docs/ARCHITECTURE.md) and [invoice adapter](docs/ZINGOLIB_INVOICE_ADAPTER.md).
+**Stack:** Next.js, TypeScript, PostgreSQL/Neon, Drizzle, SHA-256 commitments, Zcash testnet, Zebra, Zallet/Zingolib and a separate authenticated receiving worker.
 
-| Critical feature | Actual status |
-| --- | --- |
-| Auction creation, seller authority attestation, server deadlines, commitment receipt, reveal, tie-break, invoice, manual transfer attestations | Implemented and locally tested; production payment receiver requires DNS TXT control check |
-| Owner Auction marketplace and separate read-only Demo Market | Search, advanced filters, sorting, watchlist, list/card views; final winning price only after valid finalization; no demo records or payments in PostgreSQL |
-| Dropping Soon and Pre-Release | Clearly labeled previews only; no live feed, deletion dates, registrar partnership, bids, or payments |
-| Judge practice auction | Isolated PostgreSQL session, two genuine browser commitments and downloaded receipts, server deadlines, valid reveals, deterministic winner; **no invoice or payment request**. Browser tested |
-| Seller CSV import | Preview and attestation, 1–20 privately staged names, DNS TXT activation, cancellation; browser tested for staging and failed DNS. External positive DNS check remains unverified |
-| PostgreSQL schema and migrations | Migrations 0000–0007 applied to isolated PostgreSQL 16 and the configured Neon `neondb/public` target. Vercel's Production database assignment has not been independently inspected |
-| Login/session and email-specific rate limiting | Implemented and locally tested |
-| Email verification | Resend signup and rate-limited resend implemented; owner reports live delivery and Gmail SPF/DKIM/DMARC PASS, with some Spam placement |
-| Zallet receiver assignment and wallet note monitoring | Implemented; tested against real local Z3 regtest RPC |
-| Real regtest payment recognized | **Yes:** shielded receiver note, Zebra chain check, three confirmations. Transparent coinbase source and overpayment; see status report |
-| Real public testnet receiving recognized | **Yes, isolated faucet deposit:** NU7-compatible Zingolib decrypted a 1 TAZ Ironwood note at block 4,541,930; Zebra verified the transaction in the active chain with over three confirmations. **Invoice-specific public-testnet settlement and worker restart are now verified; see [sanitized proof](docs/INVOICE_PAYMENT_PROOF.md).** Zallet beta.1 remains stopped. See [demo evidence](docs/DEMO_EVIDENCE.md). |
-| DNS TXT control check | Implemented; external DNS evidence test pending |
-| Vercel, registrar automation, escrow, NFTs/art/real estate | Public Vercel routes pass a smoke check; its exact Production database target and authenticated flows remain unverified. Other features are planned only |
+The web application does not host Zcash wallet keys on Vercel. The trusted operator can inspect revealed bids and operates winner selection; this is **not** a trustless escrow or automatic registrar-transfer protocol. Production payment collection is disabled. [Architecture and trust model](docs/ARCHITECTURE.md) · [Security](docs/SECURITY.md)
 
-Commitments hide amounts during bidding, but the application server sees valid reveals. The operator/database can access application records and remains trusted for availability and winner selection. An access-controlled invoice is not an encrypted Zcash transaction. Shielded receiving protects the recipient from public chain observers; it does not erase network metadata or guarantee transfer of the domain. Do not use mainnet or high-value assets.
+## Run locally
 
-## Local setup
-
-Requires Node 22+, PostgreSQL 16+, npm. Copy [.env.example](.env.example) to `.env.local` and set a **private** `DATABASE_URL` and random `WORKER_SECRET` (at least 32 characters). Never send secrets in chat or commit `.env.local`.
+Requires Node.js **22+**, npm and PostgreSQL **16+**.
 
 ```bash
+git clone https://github.com/sopskistar/shadowbid.git
+cd shadowbid
 npm ci
-npm run db:check # confirms the target and reports missing schema; exits nonzero until migrated
+cp .env.example .env.local
+# Configure a local DATABASE_URL and WORKER_SECRET in .env.local
+npm run db:check
 npm run db:migrate
 npm run dev
 ```
 
-Open `http://localhost:3000` (or the port Next.js reports). The twelve illustrative `.com`, `.ai`, `.xyz`, and `.org` names are bundled as a read-only **Demo Market**; no seed, database auction, bid, deadline, or invoice is created for them. The desktop marketplace defaults to a compact list; filters, watchlist, and card view are optional. The legacy `npm run seed:samples` command is a no-op. Existing sample rows are preserved in PostgreSQL but excluded from the public real-auction query. Reserved `.example`, `.test`, `.invalid`, and `.localhost` protocol-test listings are also excluded from public auction results. To test a live two-minute auction, create a seller listing with `ALLOW_SHORT_AUCTIONS=true` in a disposable local database. The test-user seed requires a loopback PostgreSQL URL and explicit `TEST_USER_SEED_ENABLED=true`.
+Open [localhost:3000](http://localhost:3000). Use only a disposable development database; never point local tests or migrations at the preserved Production records. A fresh environment needs the documented configuration before seller or wallet-backed flows will work.
 
-Production signup requires a real verified Resend sender and `EMAIL_VERIFICATION_MODE=resend`; without that configuration the API returns 503 instead of pretending to send email. Local development may sign up unverified accounts without labeling their email verified. Password recovery is not implemented.
+```bash
+npm test
+npm run lint
+npm run build
+# With a disposable loopback app/database:
+E2E_ISOLATED_DB=true npm run test:e2e -- --workers=1
+```
 
-## Neon and Vercel
+[Full setup](docs/DEPLOYMENT.md) · [Testing guide](docs/TESTING.md) · [Zcash receiver setup](docs/ZCASH_SETUP.md)
 
-The owner created a Neon resource named `shadowbid` in Washington, D.C. East. The configured pooled URL now has migrations 0000–0007; use `npm run db:check` to confirm it. The owner reports that production Resend delivery works and Gmail SPF, DKIM, and DMARC checks pass; the workspace has not inspected those account settings or headers. Keep wallet RPC credentials and wallet keys off Vercel. The wallet worker runs separately on WSL or an always-on host. See [deployment](docs/DEPLOYMENT.md) and [Zcash setup](docs/ZCASH_SETUP.md).
+## Scope and next steps
 
-## Explore and verify
+ShadowBid demonstrates confidential domain-price discovery and a separately proven shielded-invoice receiving path. The auction operator remains trusted, domain transfers require seller/buyer action at the registrar, and mainnet production settlement is not enabled. Escrow, automated domain transfer and additional asset classes are future extensions—not current product claims.
 
-Start the 60-second tour and open **Try a Private Auction** for an isolated two-bidder commit/reveal practice using real protocol code and no payment request. Browse the read-only Demo Market, then switch to Owner Auctions for seller-created names. Dropping Soon and Pre-Release are source-free previews. Separate authenticated seller and bidder accounts are required to test real authorization, winner checkout, and manual transfer. Sellers can enter owned domains directly or stage a CSV on their dashboard; CSV names activate only after individual DNS TXT checks. `E2E_ISOLATED_DB=true npm run test:e2e` exercises a fast two-bidder path against a disposable **loopback** PostgreSQL database and loopback app. `npx tsx scripts/regtest-e2e.ts` can repeat the genuine local Z3 regtest receiving test after its explicit local-only setup. Fixture payment tests and the regtest test are **not** evidence of a public testnet transaction. See [judge practice](docs/JUDGE_SANDBOX.md).
-
-Read [hackathon demo evidence](docs/DEMO_EVIDENCE.md), [auction protocol](docs/AUCTION_PROTOCOL.md), [Private Markets audit](docs/PRIVATE_MARKETS_AUDIT.md), [privacy](docs/PRIVACY.md), [security](docs/SECURITY.md), [testing](docs/TESTING.md), [integration status](docs/INTEGRATION_STATUS.md), and the [owner acceptance checklist](docs/GO_NO_GO.md). The repository uses original ShadowBid code and the owner's supplied brand images; hackathon submission and final video remain owner actions.
+For technical details, see the [auction protocol](docs/AUCTION_PROTOCOL.md), [privacy design](docs/PRIVACY.md), [public-testnet invoice proof](docs/INVOICE_PAYMENT_PROOF.md) and [release evidence](docs/RELEASE_VALIDATION.md).
