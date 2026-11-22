@@ -133,3 +133,41 @@ E2E_ISOLATED_DB=true npm run test:e2e -- --workers=1
 ShadowBid demonstrates confidential domain-price discovery and a separately proven shielded-invoice receiving path. The auction operator remains trusted, domain transfers require seller/buyer action at the registrar, and mainnet production settlement is not enabled. Escrow, automated domain transfer and additional asset classes are future extensions—not current product claims.
 
 For technical details, see the [auction protocol](docs/AUCTION_PROTOCOL.md), [privacy design](docs/PRIVACY.md), [public-testnet invoice proof](docs/INVOICE_PAYMENT_PROOF.md) and [release evidence](docs/RELEASE_VALIDATION.md).
+
+---
+
+## Cloud Engineering & DevOps
+
+*Project-specific engineering evidence; only repository-supported capabilities are listed.*
+
+### Cloud platforms
+- Vercel-hosted Next.js marketplace with managed PostgreSQL on Neon and Drizzle persistence.
+- The Zcash receiving worker is a separate authenticated component; key material is not deployed into the Vercel web frontend.
+
+### DevOps & CI/CD
+- Repository deployment/testing guides describe build validation and security proof workflows.
+- No verified Terraform, Kubernetes, or independently evidenced production container fleet is claimed.
+
+### Networking & API engineering
+- Implements SHA-256 sealed bid commitments, deadline-checked reveal APIs and authenticated receiving-worker boundary.
+- Separate Zcash public-testnet evidence; no live mainnet marketplace settlement is claimed.
+
+### Monitoring & reliability
+- Preserves public testnet receipts, auction proof and release validation artifacts.
+- Operator trust and production payment limitations are explicitly disclosed; no measured uptime or backup restoration is claimed.
+
+### Architecture & infrastructure diagram
+
+```mermaid
+flowchart LR
+  B[Bidder] --> W[Next.js marketplace on Vercel]
+  W --> D[(Neon PostgreSQL)]
+  W --> C[Commit and reveal checks]
+  R[Separate Zcash receiving worker] --> Z[Zcash public testnet]
+```
+
+**Deployment:** https://shadowbid-ashy.vercel.app
+
+**Technical documentation and evidence:** [Architecture](docs/ARCHITECTURE.md) · [Deployment](docs/DEPLOYMENT.md) · [Security](docs/SECURITY.md) · [Zcash proof](docs/INVOICE_PAYMENT_PROOF.md).
+
+**Current limits:** Zcash receiving testnet proof is distinct from marketplace settlement; Terraform and Kubernetes are not implemented here.
